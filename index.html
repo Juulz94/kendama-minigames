@@ -1,0 +1,1728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kendama Minigames</title>
+<!-- Testversie: niet laten indexeren door zoekmachines -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#E3C493">
+<meta name="description" content="Kendama minigames: Dare, Game of KEN, Speed Ladder, Survival and Race to Lace.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kendama">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- Voorbeeld van de link in WhatsApp/Instagram. og:image moet een volledige URL zijn: vul na het uploaden het adres van de site in. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kendama Minigames">
+<meta property="og:description" content="Kendama games for solo or with friends: Dare, Game of KEN, Speed Ladder, Survival and Race to Lace. Test version.">
+<meta property="og:url" content="https://juulz94.github.io/kendama-minigames/">
+<meta property="og:image" content="https://juulz94.github.io/kendama-minigames/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  /* ============ Stijl: warm & natuurlijk ============ */
+  :root {
+    --bg: #f8f3ea; --surface: #fffdf9; --surface2: #f1e8da; --text: #2a2119; --muted: #8b7a68; --line: #e6d9c6;
+    --accent: #c2412d; --accent-dark: #a3321f; --accent-soft: #f6dfd8; --wood: #a0703f;
+    --ok: #5a8f43; --ok-dark: #4a7837; --bad: #c2412d; --bad-dark: #a3321f;
+    --t1: #3f9461; --t2: #2f74c9; --t3: #c98a22; --t4: #e06a3a; --t5: #c2412d; --t6: #7d55c7;
+    --r: 22px; --r2: 18px;
+    --shadow: 0 1px 2px rgba(90,60,30,.06), 0 4px 14px rgba(90,60,30,.07);
+    --serif: Georgia, "Noto Serif", "Droid Serif", serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 Roboto, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  main { max-width: 600px; margin: 0 auto; padding: 0 16px 32px; }
+
+  /* App-balk */
+  .appbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 12px; padding: 12px 16px 10px; background: var(--bg); max-width: 600px; margin: 0 auto; }
+  .appbar h1 { flex: 1; margin: 0; font-size: 19px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rbtn { width: 40px; height: 40px; border-radius: 14px; border: none; background: var(--surface); box-shadow: var(--shadow); display: grid; place-items: center; padding: 0; flex: none; }
+  .rbtn:active { background: var(--surface2); }
+
+  /* Typografie en kaarten */
+  .greet { color: var(--muted); font-size: 13px; font-weight: 500; margin-top: 6px; }
+  .apptitle { font-family: var(--serif); font-size: 30px; font-weight: 700; margin: 2px 0 0; letter-spacing: -.3px; }
+  .sec { display: flex; justify-content: space-between; align-items: baseline; margin: 22px 2px 10px; font-weight: 800; font-size: 15px; }
+  .label { font-size: 13px; font-weight: 700; color: var(--muted); margin: 18px 4px 8px; }
+  .card { background: var(--surface); border-radius: var(--r2); box-shadow: var(--shadow); }
+  .pad { padding: 16px; }
+  .hint { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 8px 4px 0; }
+  .muted { color: var(--muted); }
+  .serif { font-family: var(--serif); }
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 99px; background: var(--surface2); color: #7d6650; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); display: inline-block; flex: none; }
+
+  /* Trick van de dag */
+  .hero { position: relative; overflow: hidden; margin-top: 16px; border-radius: var(--r); padding: 18px; color: #3a2412; box-shadow: var(--shadow);
+    background: linear-gradient(135deg, #edcc97 0%, #dda366 55%, #cd8248 100%); }
+  .hero::before, .hero::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,.18); }
+  .hero::before { width: 180px; height: 180px; right: -60px; top: -70px; }
+  .hero::after { width: 110px; height: 110px; right: 30px; bottom: -60px; background: rgba(255,255,255,.12); }
+  .hero small { position: relative; font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; opacity: .8; }
+  .hero b { position: relative; display: block; font-family: var(--serif); font-size: 24px; line-height: 1.2; margin: 6px 0 2px; max-width: 85%; }
+  .hero .meta { position: relative; font-size: 13px; opacity: .85; }
+  .hero button { position: relative; margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px; border: none; border-radius: 99px;
+    background: #2a2119; color: #fff; font-weight: 700; font-size: 13px; }
+
+  /* Spellen-raster */
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mode { position: relative; text-align: left; border: none; padding: 14px; background: var(--surface); border-radius: var(--r2); box-shadow: var(--shadow); min-height: 150px;
+    display: flex; flex-direction: column; }
+  .mode:active { transform: scale(.98); }
+  .mode b { display: block; font-size: 16px; margin-top: 12px; }
+  .mode small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; line-height: 1.35; }
+  .mode .tags { margin-top: auto; padding-top: 10px; }
+  .mode.wide { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; gap: 14px; }
+  .mode.wide b { margin-top: 0; }
+  .mode .q { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%; border: none; background: var(--surface2); color: var(--muted);
+    font-weight: 800; font-size: 13px; padding: 0; display: grid; place-items: center; line-height: 1; }
+  .badge { width: 52px; height: 52px; border-radius: 50%; display: block; flex: none; box-shadow: 0 2px 5px rgba(90,55,25,.28); }
+  .badge svg { width: 100%; height: 100%; display: block; }
+  .badge.sm { width: 42px; height: 42px; }
+
+  /* Knoppen */
+  .btn { width: 100%; height: 52px; border: none; border-radius: 99px; padding: 0 18px; font-size: 16px; font-weight: 800;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn:active { filter: brightness(.94); }
+  .btn:disabled { opacity: .4; }
+  .btn-primary { color: #fff; background: linear-gradient(135deg, #d5553e, #b53624); box-shadow: 0 6px 16px rgba(181,54,36,.25); }
+  .btn-ok { color: #fff; background: var(--ok); box-shadow: 0 4px 12px rgba(74,120,55,.25); }
+  .btn-bad { color: #fff; background: var(--bad); box-shadow: 0 4px 12px rgba(163,50,31,.25); }
+  .btn-soft { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .btn-text { width: auto; height: 40px; background: none; color: var(--accent); font-weight: 700; padding: 0 10px; }
+  .btn svg.i { width: 20px; height: 20px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+  .row3 .btn:last-child { width: auto; padding: 0 16px; }
+  .stack { display: grid; gap: 10px; margin-top: 16px; }
+  .center { display: flex; justify-content: center; margin-top: 6px; }
+  .dock { position: sticky; bottom: 0; z-index: 5; padding: 14px 0 16px; margin-top: 8px; background: linear-gradient(to top, var(--bg) 75%, rgba(248,243,234,0)); }
+
+  /* Instellingen */
+  .setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 12px 14px; border: none; background: none; text-align: left; }
+  .setting + .setting { border-top: 1px solid var(--line); }
+  .setting b { display: block; font-size: 15px; }
+  .setting small { display: block; font-size: 12px; color: var(--muted); }
+  .stepper { display: flex; align-items: center; gap: 8px; flex: none; }
+  .stepper button { width: 36px; height: 36px; border-radius: 12px; border: none; background: var(--surface2); font-size: 20px; font-weight: 700; padding: 0; }
+  .stepper button:disabled { opacity: .35; }
+  .stepper span { min-width: 40px; text-align: center; font-size: 17px; font-weight: 800; }
+  .switch { flex: none; width: 46px; height: 28px; border-radius: 99px; background: #d8ccbb; position: relative; transition: background .15s; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .15s; }
+  .switch.on { background: var(--accent); }
+  .switch.on::after { transform: translateX(18px); }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--surface2); border-radius: 14px; }
+  .seg button { border: none; background: none; height: 40px; border-radius: 11px; font-weight: 800; font-size: 14px; color: var(--muted); }
+  .seg button.on { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(90,60,30,.15); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { height: 34px; padding: 0 14px; border-radius: 99px; border: none; background: var(--surface2); color: #7d6650; font-size: 13px; font-weight: 700; }
+  .chip.on { background: var(--accent); color: #fff; }
+  .chip.part { box-shadow: inset 0 0 0 2px var(--accent); color: var(--accent); }
+  .lvgrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 12px; }
+  .lv { height: 40px; border-radius: 12px; border: none; background: var(--surface2); color: #7d6650; font-weight: 800; padding: 0; }
+  .lv.on { background: var(--accent); color: #fff; }
+  .count { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  /* Spelers */
+  .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--pc); color: #fff; font-weight: 800; font-size: 15px; flex: none;
+    border: none; padding: 0; box-shadow: inset 0 -3px 0 rgba(0,0,0,.12); }
+  .av.sm { width: 30px; height: 30px; font-size: 12px; }
+  .prow { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+  .prow + .prow { border-top: 1px solid var(--line); }
+  input, select { width: 100%; min-width: 0; height: 44px; padding: 0 14px; border: none; border-radius: 12px; background: var(--surface2); color: var(--text); font: inherit; font-size: 16px; }
+  input:focus, select:focus { outline: 2px solid var(--accent); }
+  input::placeholder { color: #a8977f; }
+
+  /* Trick-weergave */
+  .overline { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .ttl { font-family: var(--serif); font-size: 25px; font-weight: 700; line-height: 1.2; margin: 8px 0 2px; overflow-wrap: anywhere; }
+  .ttl.long { font-size: 20px; }
+  .ttl ol { margin: 0; padding-left: 26px; font-size: 21px; }
+  .desc { color: var(--muted); margin: 6px 0 0; }
+  .note { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #fbf1e4; border: 1px dashed #e2c9a4; }
+  .note small { display: block; font-size: 11px; color: var(--wood); font-weight: 800; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+  .links { display: flex; flex-wrap: wrap; gap: 0 8px; margin: 8px 0 0 -10px; }
+  a.link { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 10px; color: var(--accent); font-weight: 700; text-decoration: none; font-size: 14px; }
+  a.link svg.i { width: 18px; height: 18px; }
+  .empty { text-align: center; color: var(--muted); padding: 22px 12px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+  .stats div { padding: 14px 4px; }
+  .stats div + div { border-left: 1px solid var(--line); }
+  .stats b { display: block; font-size: 22px; font-weight: 800; }
+  .stats span { font-size: 12px; color: var(--muted); }
+
+  /* Game of KEN */
+  .kp { display: flex; align-items: center; gap: 10px; padding: 10px 14px; transition: background .2s; }
+  .kp + .kp { border-top: 1px solid var(--line); }
+  .kp.turn { background: color-mix(in srgb, var(--pc) 9%, var(--surface)); }
+  .kp.out { opacity: .4; }
+  .kp .nm { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; font-weight: 700; }
+  .kp .nm > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .letters { display: flex; gap: 6px; }
+  .kl { width: 32px; height: 32px; border-radius: 9px; border: 2px dashed #d9c8b0; color: #c6b296; display: grid; place-items: center; font-weight: 800; font-family: var(--serif); }
+  .kl.on { background: var(--lc); border: 2px solid var(--lc); color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,.15); }
+  .kl.pop { animation: fill .5s cubic-bezier(.2,1.5,.4,1); }
+  @keyframes fill { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+  .who { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; color: var(--text); }
+
+  /* Timer, ladder, race */
+  .ring { position: relative; display: grid; place-items: center; margin: 4px auto 0; width: 190px; height: 190px; }
+  .ring svg { position: absolute; inset: 0; }
+  .ring .tm { text-align: center; }
+  .ring .tm b { display: block; font-size: 38px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+  .ring .tm small { font-size: 12px; color: var(--muted); font-weight: 700; }
+  .timerbar { text-align: center; font-size: 42px; font-weight: 800; font-variant-numeric: tabular-nums; padding: 12px; letter-spacing: -.5px; }
+  .timerbar.idle, .ring.idle .tm b { color: #b9a68d; }
+  .ladder { list-style: none; margin: 0; padding: 6px 0; }
+  .ladder li { position: relative; display: flex; align-items: center; gap: 12px; padding: 6px 4px; font-size: 14px; }
+  .ladder li::before { content: ""; position: absolute; left: 15px; top: -8px; height: 16px; width: 2px; background: var(--line); }
+  .ladder li:first-child::before { display: none; }
+  .ladder .n { position: relative; z-index: 1; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800;
+    background: var(--surface); border: 2px solid #dccbb3; color: var(--muted); flex: none; }
+  .ladder .n svg { width: 13px; height: 13px; stroke-width: 3.2; }
+  .ladder .t { flex: 1; min-width: 0; }
+  .ladder .l { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .ladder li.done { color: var(--muted); }
+  .ladder li.done .n { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .ladder li.now { font-weight: 800; }
+  .ladder li.now .n { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .ladder li.skip { color: #b9a68d; text-decoration: line-through; }
+  .ladder li.cp .t::after { content: "Checkpoint"; margin-left: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: var(--wood);
+    background: #f3e6d2; padding: 2px 6px; border-radius: 99px; text-decoration: none; display: inline-block; }
+  .lives { display: inline-flex; gap: 2px; color: var(--bad); }
+  .lives svg.i { width: 18px; height: 18px; }
+  .lives .on { fill: currentColor; }
+  .lives .off { opacity: .35; }
+  .bar { height: 6px; border-radius: 99px; background: var(--surface2); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 99px; background: var(--pc, var(--accent)); transition: width .25s; }
+  .pcard { padding: 12px 14px; }
+  .pcard + .pcard { border-top: 1px solid var(--line); }
+  .pcard.out { opacity: .5; }
+  .pcard .top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .pcard .top b { flex: 1; }
+  .pcard .cur { font-family: var(--serif); font-size: 17px; font-weight: 700; margin: 8px 0 10px; }
+  .pcard .fin { color: var(--ok); font-weight: 800; margin: 8px 0 2px; }
+  .rank { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+  .rank + .rank { border-top: 1px solid var(--line); }
+  .rank .pos { width: 20px; font-weight: 800; color: var(--muted); font-family: var(--serif); font-size: 17px; }
+  .rank b { flex: 1; }
+  .rank .v { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600; }
+  .rank.me { background: var(--accent-soft); }
+  .whogrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .whogrid button { display: flex; align-items: center; gap: 10px; height: 60px; padding: 0 12px; border: none; border-radius: var(--r2); background: var(--surface); box-shadow: var(--shadow); font-weight: 800; text-align: left; }
+  .whogrid button:active { background: var(--surface2); }
+  .whogrid button span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Tricklijst */
+  details + details { border-top: 1px solid var(--line); }
+  summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 14px; font-weight: 700; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  summary .cnt { margin-left: auto; color: var(--muted); font-size: 12px; font-weight: 600; }
+  summary .chev { width: 18px; height: 18px; color: var(--muted); transition: transform .15s; }
+  details[open] summary .chev { transform: rotate(90deg); }
+  .trow { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); }
+  .trow .nm { flex: 1; font-size: 14px; }
+  .trow .nm small { display: block; font-size: 11px; color: var(--muted); }
+  .trow .c { font-size: 12px; color: var(--ok); font-weight: 800; }
+  .trow.off .nm { color: #b9a68d; text-decoration: line-through; }
+  .trow button { border: none; background: none; color: var(--muted); padding: 4px; }
+  .gl { padding: 0 14px 12px; font-size: 14px; }
+  .gl p { margin: 6px 0; }
+  .gl b { color: var(--wood); }
+  form.add { display: grid; grid-template-columns: 1fr 92px 48px; gap: 8px; padding: 12px; }
+  form.add .btn { width: 48px; height: 44px; padding: 0; }
+
+  /* Overlays */
+  .snack { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 130px); background: #2a2119; color: #fff; padding: 12px 18px; border-radius: 99px;
+    font-size: 14px; font-weight: 600; max-width: calc(100% - 32px); transition: transform .25s; z-index: 40; }
+  .snack.show { transform: translate(-50%, 0); }
+  .scrim { position: fixed; inset: 0; z-index: 30; background: rgba(42,33,25,.45); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { width: 100%; max-width: 600px; max-height: 86vh; overflow: auto; background: var(--surface); border-radius: 26px 26px 0 0; padding: 10px 20px 22px; }
+  .sheet .grab { width: 40px; height: 5px; border-radius: 99px; background: var(--line); margin: 0 auto 14px; }
+  .sheet h3 { font-family: var(--serif); font-size: 23px; margin: 0 0 12px; }
+  .sheet ol { margin: 0; padding-left: 20px; }
+  .sheet li { margin-bottom: 9px; color: #4a3d31; }
+  .cd { position: fixed; inset: 0; z-index: 35; display: grid; place-items: center; background: rgba(42,33,25,.82); }
+  .cd span { font-family: var(--serif); font-size: 130px; font-weight: 700; color: #fff; animation: cd .7s ease-out; }
+  @keyframes cd { 0% { transform: scale(1.5); opacity: 0; } 35% { opacity: 1; } 100% { transform: none; } }
+
+  /* Winnaarsscherm */
+  .win { position: fixed; inset: 0; z-index: 50; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #3a2412;
+    background: radial-gradient(circle at 50% 38%, #fff7ea 0%, #f3dcb8 55%, #e3b97f 100%); animation: fadein .35s both; }
+  @keyframes fadein { from { opacity: 0; } }
+  .win .rays { position: absolute; width: 900px; height: 900px; left: 50%; top: 40%; margin: -450px 0 0 -450px; opacity: .16; border-radius: 50%;
+    background: repeating-conic-gradient(#c97a43 0 10deg, transparent 10deg 20deg); animation: spin 26s linear infinite;
+    -webkit-mask: radial-gradient(circle, #000 18%, transparent 66%); mask: radial-gradient(circle, #000 18%, transparent 66%); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .win .conf { position: absolute; top: -20px; width: 8px; height: 14px; border-radius: 2px; animation: fall linear infinite; }
+  @keyframes fall { 0% { transform: translateY(-20px) rotate(0); } 100% { transform: translateY(110vh) rotate(560deg); } }
+  .win .game { position: relative; font-size: 12px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7; margin-bottom: 40px; animation: rise .6s .1s both; }
+  .win .wbadge { position: relative; width: 124px; height: 124px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 50px; font-weight: 800;
+    font-family: var(--serif); background: var(--pc); box-shadow: 0 0 0 9px rgba(255,255,255,.45), 0 16px 34px rgba(90,50,20,.3); animation: popin .8s cubic-bezier(.2,1.6,.4,1) both; }
+  .win .crown { position: absolute; top: -34px; left: 50%; width: 60px; margin-left: -30px; animation: drop 1s .55s cubic-bezier(.2,1.5,.4,1) both; }
+  @keyframes popin { from { transform: scale(0); } }
+  @keyframes drop { from { transform: translateY(-70px) rotate(-25deg); opacity: 0; } }
+  .win .wname { position: relative; font-family: var(--serif); font-size: 38px; font-weight: 700; margin-top: 24px; padding: 0 20px; letter-spacing: -.5px; animation: rise .7s .35s both; }
+  .win .wsub { position: relative; font-size: 14px; opacity: .8; margin-top: 4px; padding: 0 24px; animation: rise .7s .5s both; }
+  .win .wstat { position: relative; margin-top: 18px; padding: 10px 18px; border-radius: 99px; background: rgba(255,255,255,.7); font-weight: 800; display: flex; gap: 8px; align-items: center; animation: rise .7s .65s both; }
+  .win .wstat .kl { width: 28px; height: 28px; font-size: 13px; }
+  .win .wclose { position: absolute; top: max(14px, env(safe-area-inset-top)); right: 14px; z-index: 2; width: 44px; height: 44px; border: none; border-radius: 50%;
+    background: rgba(255,255,255,.55); color: #3b1f0d; display: grid; place-items: center; cursor: pointer; }
+  .win .wclose svg.i { width: 22px; height: 22px; }
+  .about { margin: 22px 4px 8px; padding-top: 14px; border-top: 1px solid rgba(59,31,13,.18); font-size: 12px; line-height: 1.5; color: var(--muted); }
+  .about p { margin: 6px 0 0; }
+  .about .fbrow { display: flex; align-items: center; justify-content: space-between; margin-left: -10px; }
+  .about .ver { font-size: 11px; font-weight: 700; opacity: .8; }
+  .sheet .qtext { margin: 0 0 4px; color: var(--text); }
+  .win .wbtns { position: absolute; left: 20px; right: 20px; bottom: 24px; max-width: 560px; margin: 0 auto; display: grid; gap: 10px; animation: rise .7s .9s both; }
+  @keyframes rise { from { transform: translateY(20px); opacity: 0; } }
+
+  /* =====================================================================
+     Houtstijl (mix): planken met nerf, ingebrande tekst/iconen/randen,
+     uitstekende houten blokjes voor kaarten en knoppen, uitgesneden groeven
+     voor invoer, tellers en schakelaars. Houttexturen komen uit JS (--plank*).
+     ===================================================================== */
+  :root {
+    --bg: #e3c493; --surface: #f2ddb6; --surface2: #e6cb9d; --text: #3b1f0d; --muted: #6e4b2c; --line: rgba(59,31,13,.2);
+    --accent: #5a2f14; --accent-dark: #3b1f0d; --accent-soft: rgba(90,47,20,.12); --wood: #7a4f28;
+    --ok: #5f7d37; --bad: #a8402a;
+    --raise: inset 0 1px 0 rgba(255,250,235,.65), 0 2px 0 #b98a54, 0 3px 0 #a87943, 0 6px 10px rgba(60,35,10,.22);
+    --raise-sm: inset 0 1px 0 rgba(255,250,235,.6), 0 2px 0 #b98a54, 0 3px 5px rgba(60,35,10,.18);
+    --groove: inset 0 2px 3px rgba(80,45,15,.42), inset 0 -1px 0 rgba(255,245,225,.55);
+    --burn: 0 0 1.4px rgba(120,60,15,.5), 0 0 6px rgba(140,70,20,.2);
+  }
+  html { background-color: var(--bg); background-image: var(--plank); background-size: 800px 400px; }
+  body { background: transparent; }
+  .appbar { background-color: rgba(227,196,147,.94); }
+  .dock { background: linear-gradient(to top, rgba(227,196,147,.97) 70%, rgba(227,196,147,0)); }
+  .apptitle, .ttl, .hero b, .mode b, .appbar h1, .sec, .ring .tm b, .timerbar, .win .wname, .sheet h3, .stats b { text-shadow: var(--burn); }
+  /* Echt ingebrand: rafelige rand en ongelijke schroeirand via SVG-filter (alleen op koppen en tricknamen) */
+  .apptitle, .ttl, .hero b, .mode b, .appbar h1, .sec, .ring .tm b, .timerbar, .win .wname, .sheet h3 {
+    color: #2a1406; text-shadow: none; filter: url(#burnText); }
+  .greet, .label, .hint, .desc, .muted, .mode small, .count, .empty { color: var(--muted); }
+
+  /* Planken (uitstekende blokjes) */
+  .card, .mode, .hero, .whogrid button, .sheet, .btn-soft, .rbtn, .win .wstat {
+    background-color: #f2ddb6; background-image: var(--plankLight); background-size: 800px 400px; box-shadow: var(--raise); }
+  .hero { color: var(--text); border-radius: var(--r); }
+  .hero::before, .hero::after { display: none; }
+  .hero button { background-color: #3d2617; background-image: var(--plankDark); background-size: 800px 400px; color: #f6e3c0;
+    box-shadow: inset 0 1px 0 rgba(255,220,170,.25), 0 2px 0 #24140b, 0 4px 8px rgba(40,20,5,.3); }
+  .mode:active, .whogrid button:active, .rbtn:active { transform: translateY(2px); box-shadow: var(--raise-sm); }
+  .stats div + div, .setting + .setting, .prow + .prow, .kp + .kp, .rank + .rank, .pcard + .pcard, details + details, .trow { border-color: var(--line); }
+
+  /* Knoppen */
+  .btn:active { filter: none; transform: translateY(2px); }
+  .btn-primary { background-color: #3d2617; background-image: var(--plankDark); background-size: 800px 400px; color: #f6e3c0;
+    box-shadow: inset 0 1px 0 rgba(255,220,170,.25), 0 3px 0 #24140b, 0 6px 12px rgba(40,20,5,.32); }
+  .btn-ok { background-color: #5f7d37; background-image: var(--plankStain); background-size: 800px 400px; color: #f3ecd7;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 3px 0 #33441c, 0 6px 12px rgba(40,20,5,.28); }
+  .btn-bad { background-color: #a8402a; background-image: var(--plankStain); background-size: 800px 400px; color: #f8e6d6;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 3px 0 #5a1f13, 0 6px 12px rgba(40,20,5,.28); }
+  .btn-soft { color: var(--text); }
+  .btn-text, a.link, .linkbtn { color: var(--accent-dark); }
+
+  /* Uitgesneden groeven */
+  .mode .q, .stepper button { background: rgba(120,80,40,.12); box-shadow: var(--groove); color: var(--text); }
+  input, select { background: rgba(255,245,225,.5); box-shadow: var(--groove); }
+  input::placeholder { color: #8a6a48; }
+  input:focus, select:focus { outline: 2px solid var(--accent-dark); }
+  .seg { background: rgba(120,80,40,.14); box-shadow: var(--groove); }
+  .seg button.on { background-color: #f2ddb6; background-image: var(--plankLight); background-size: 800px 400px; box-shadow: var(--raise-sm); color: var(--text); }
+  .switch { background: rgba(120,80,40,.22); box-shadow: var(--groove); }
+  .switch.on { background: #5a2f14; }
+  .switch::after { background: #f4e2c0; box-shadow: 0 1px 2px rgba(60,30,10,.4); }
+  .bar { background: rgba(120,80,40,.16); box-shadow: inset 0 1px 2px rgba(80,45,15,.35); }
+  .bar i { background: var(--pc, #5a2f14); }
+
+  /* Keuzeknopjes: houten blokjes, gekozen = ingebrand */
+  .chip, .lv { background: rgba(255,244,222,.55); color: var(--text); box-shadow: var(--raise-sm); }
+  .chip.on, .lv.on { background: #3b1f0d; color: #f6e3c0; box-shadow: inset 0 2px 4px rgba(0,0,0,.5); }
+  .chip.part { background: rgba(255,244,222,.55); box-shadow: inset 0 0 0 2px #3b1f0d; color: var(--text); }
+  .pill { background: transparent; border: 1.5px solid rgba(59,31,13,.5); color: var(--text); padding: 3px 8px; }
+
+  /* Spelers en letters */
+  .av { background-image: var(--plankStain); background-size: 300px 150px; box-shadow: inset 0 0 0 2px rgba(59,31,13,.55), inset 0 -3px 0 rgba(0,0,0,.15); }
+  .kl { border: none; background: rgba(120,80,40,.1); box-shadow: var(--groove); color: rgba(59,31,13,.35); }
+  .kl.on { background-color: var(--lc); background-image: var(--plankStain); background-size: 300px 150px; border: none; color: #fff8ec;
+    box-shadow: inset 0 0 0 1.5px rgba(59,31,13,.5), inset 0 -3px 0 rgba(0,0,0,.18); }
+  .kp.turn, .rank.me { background-color: rgba(90,47,20,.1); }
+
+  /* Ladder */
+  .ladder li::before { background: rgba(59,31,13,.28); }
+  .ladder .n { border: none; background: rgba(255,245,225,.45); box-shadow: var(--groove); color: var(--muted); }
+  .ladder li.done .n { background: #3b1f0d; color: #f6e3c0; box-shadow: inset 0 1px 3px rgba(0,0,0,.5); }
+  .ladder li.now .n { background: rgba(255,245,225,.6); box-shadow: inset 0 0 0 2px #3b1f0d; color: var(--text); }
+  .ladder li.cp .t::after { background: transparent; border: 1.5px solid rgba(59,31,13,.5); color: var(--text); }
+  .lives { color: var(--bad); }
+  .timerbar.idle, .ring.idle .tm b { color: rgba(59,31,13,.42); }
+  .note { background: rgba(255,245,225,.4); border: 1.5px dashed rgba(59,31,13,.45); }
+  .note small { color: var(--text); }
+
+  /* Overlays */
+  .snack { background-color: #3d2617; background-image: var(--plankDark); background-size: 800px 400px; color: #f6e3c0; }
+  .scrim { background: rgba(40,22,8,.55); }
+  .sheet .grab { background: rgba(59,31,13,.3); box-shadow: var(--groove); }
+  .sheet li { color: var(--text); }
+  .cd { background: rgba(30,16,6,.86); }
+  .cd span { color: #f6e3c0; text-shadow: 0 0 22px rgba(220,120,40,.45); }
+  .win { color: var(--text); background-color: #e3c493;
+    background-image: radial-gradient(circle at 50% 40%, rgba(255,240,210,.55), rgba(120,70,30,.25) 75%), var(--plank); background-size: auto, 800px 400px; }
+  .win .rays { background: repeating-conic-gradient(#7a4018 0 10deg, transparent 10deg 20deg); opacity: .1; }
+  .win .wbadge { background-color: #e9cc98; background-image: var(--plankLight); background-size: 800px 400px; color: #3b1f0d; text-shadow: var(--burn);
+    box-shadow: 0 0 0 7px var(--pc), 0 0 0 10px rgba(59,31,13,.55), 0 14px 30px rgba(60,30,10,.35); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<!-- Gedeelde SVG-definities voor de houten logo's -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="woodDisc" cx="40%" cy="36%" r="72%"><stop offset="0" stop-color="#f4dfb8"/><stop offset=".65" stop-color="#e4c08b"/><stop offset="1" stop-color="#cf9f63"/></radialGradient>
+  <clipPath id="discClip"><circle cx="24" cy="24" r="21.8"/></clipPath>
+  <filter id="woodGrain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018 0.42" numOctaves="3" seed="11"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.50  0 0 0 0 0.30  0 0 0 0 0.12  2.2 0 0 0 -0.95"/>
+  </filter>
+  <!-- Ingebrande tekst: licht rafelige rand + ongelijke bruine schroeirand -->
+  <filter id="burnText" x="-4%" y="-25%" width="108%" height="150%">
+    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.3" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="1.6" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="9" result="m"/>
+    <feComposite in="b" in2="m" operator="arithmetic" k1="1.3" k2=".35" k3="0" k4="0" result="bm"/>
+    <feColorMatrix in="bm" type="matrix" values="0 0 0 0 .48  0 0 0 0 .24  0 0 0 0 .07  0 0 0 .55 0" result="halo"/>
+    <feMerge><feMergeNode in="halo"/><feMergeNode in="d"/></feMerge>
+  </filter>
+  <!-- Jaarringen in het kopse hout iets laten golven -->
+  <filter id="ringWobble" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <!-- Schors: onregelmatige rand -->
+  <filter id="barkEdge" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".35" numOctaves="2" seed="21" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <radialGradient id="endGrain" cx="49%" cy="51%" r="60%"><stop offset="0" stop-color="#f0d7a9"/><stop offset=".7" stop-color="#e2bd86"/><stop offset="1" stop-color="#cf9f63"/></radialGradient>
+  <filter id="burnt" x="-30%" y="-30%" width="160%" height="160%">
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="1" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="0.9" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feGaussianBlur in="d" stdDeviation="1.1" result="b"/>
+    <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.24  0 0 0 0 0.09  0 0 0 0.55 0" result="halo"/>
+    <feMerge><feMergeNode in="halo"/><feMergeNode in="d"/></feMerge>
+  </filter>
+</defs></svg>
+<div class="appbar" id="appbar" hidden>
+  <button class="rbtn" id="back" aria-label="Back"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+  <h1 id="title"></h1>
+  <button class="rbtn" id="helpBtn" aria-label="How to play"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8 1c0 1.7-2.4 2.2-2.4 3.7M12 17.2h.01"/></svg></button>
+</div>
+
+<main>
+<!-- Hoofdmenu -->
+<section id="home">
+  <div style="padding-top:18px">
+    <div class="apptitle">Kendama Minigames</div>
+  </div>
+  <div class="hero" id="tod"></div>
+  <div class="sec">Games</div>
+  <div class="modes" id="menu"></div>
+  <button class="card pad" id="reqLink" style="width:100%;margin-top:14px;border:none;text-align:left;display:flex;align-items:center;gap:12px">
+    <span style="flex:1"><b class="serif" style="font-size:16px;display:block">Missing a trick?</b><span class="muted" style="font-size:13px">Request it and we'll see if it can be added.</span></span>
+    <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+</section>
+
+<!-- Dare -->
+<section id="play" hidden>
+  <div class="label" style="margin-top:4px">Level</div>
+  <div class="card pad" id="darePicker"></div>
+  <div class="label">Dare type</div>
+  <div class="card" id="modes"></div>
+  <div class="card pad" id="dare" style="margin-top:16px"><div class="empty">Pick your level and tap <b>New dare</b>.</div></div>
+  <div class="stack">
+    <button class="btn btn-primary" id="dareGo">New dare</button>
+    <div class="row2"><button class="btn btn-ok" id="yes" disabled>Landed</button><button class="btn btn-soft" id="no" disabled>Skip</button></div>
+  </div>
+  <div class="card stats" style="margin-top:16px">
+    <div><b id="sDone">0</b><span>Landed</span></div>
+    <div><b id="sStreak">0</b><span>Current streak</span></div>
+    <div><b id="sBest">0</b><span>Best streak</span></div>
+  </div>
+</section>
+
+<!-- Instellingen -->
+<section id="setup" hidden></section>
+
+<!-- Spelers -->
+<section id="players" hidden>
+  <div class="label" style="margin-top:4px">Names and colours</div>
+  <div class="card" id="playerList"></div>
+  <p class="hint">Names are optional. Tap the circle to pick another colour.</p>
+  <div class="dock"><button class="btn btn-primary" id="startGame">Start game</button></div>
+</section>
+
+<!-- Game of KEN -->
+<section id="kengame" hidden>
+  <div class="card" id="kenBoard" style="margin-top:4px"></div>
+  <div class="card pad" id="kenTurn" style="margin-top:12px"></div>
+  <div class="dock"><div id="kenActions"></div><div class="center"><button class="btn btn-text" id="kenUndo">Undo</button></div></div>
+</section>
+
+<!-- Speed Ladder / Survival -->
+<section id="laddergame" hidden></section>
+
+<!-- Race to Lace -->
+<section id="racegame" hidden></section>
+
+<!-- Tricklijst -->
+<section id="tricks" hidden>
+  <div class="card pad" id="reqCard" style="margin-top:4px">
+    <div class="ttl" style="font-size:19px;margin-top:0">Request a trick</div>
+    <p class="desc" style="margin-top:2px">Missing a trick? Enter its name and level and we'll see if it can be added.</p>
+    <form id="reqForm" style="display:grid;grid-template-columns:1fr 112px;gap:8px;margin-top:12px">
+      <input id="reqName" placeholder="Trick name" maxlength="80" required>
+      <select id="reqLvl" aria-label="Level"></select>
+      <input id="reqInsta" placeholder="Instagram handle (optional)" maxlength="40" autocapitalize="off" autocomplete="off" style="grid-column:1/-1">
+      <button class="btn btn-primary" style="grid-column:1/-1">Send request</button>
+    </form>
+    <p class="hint" id="reqPending" hidden></p>
+  </div>
+  <div class="label">All tricks</div>
+  <input id="search" placeholder="Search tricks" type="search">
+  <p class="hint">Tap a trick to turn it off; turned-off tricks won't show up anywhere in the app.</p>
+  <div class="card" style="margin-top:12px"><details><summary><svg class="i chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>Glossary (KWC notation)</summary><div class="gl" id="glList"></div></details></div>
+  <div class="card" id="trickList" style="margin-top:12px"></div>
+  <div class="label">Add your own trick</div>
+  <form class="card add" id="addForm">
+    <input id="addName" placeholder="Trick name" required>
+    <select id="addLvl"></select>
+    <button class="btn btn-primary" aria-label="Add"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  </form>
+  <p class="hint" id="srcHint"></p>
+  <div class="stack"><button class="btn btn-soft" id="reset">Reset dare stats</button></div>
+  <div class="about">
+    <div class="fbrow"><a class="link" id="feedbackLink" href="#" target="_blank" rel="noopener">Send feedback</a><span class="ver" id="appVersion"></span></div>
+    <p>This app only stores your name, turned-off tricks and dare stats on this device. A trick request sends what you fill in (including the optional Instagram handle) to a Google Form.</p>
+    <p>Unofficial fan app, not affiliated with the Kendama World Cup (KWC).</p>
+  </div>
+</section>
+</main>
+
+<div class="scrim" id="modal" hidden><div class="sheet" role="dialog"><div class="grab"></div><div id="modalBody"></div>
+  <div class="stack"><button class="btn btn-soft" id="modalX">Close</button></div></div></div>
+<div class="cd" id="cd" hidden><span id="cdNum"></span></div>
+<div class="win" id="win" hidden></div>
+<div class="snack" id="toast"></div>
+
+<script src="tricks.js"></script>
+<script>
+// =====================================================================
+//  INSTELLINGEN VOOR DE TESTVERSIE
+//  FEEDBACK_FORM_URL: plak hier de link van het feedback-Google-Form (de "verzend"-link, eindigt op /viewform).
+//  APP_VERSION: verhoog dit bij elke nieuwe upload (en zet dezelfde waarde in sw.js bij VERSION).
+// =====================================================================
+const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5VzprFm14dYYpHh8EtgFnjXM-63b0YXoiBh4UdoVAZAF16w/viewform";
+const APP_VERSION = "v0.1-test";
+
+// =====================================================================
+//  Houttexturen (SVG-ruis in de lengterichting = nerf), als CSS-variabelen
+// =====================================================================
+(function () {
+  // Procedureel hout, naadloos (stitchTiles):
+  //  a) jaarringen: uitgerekte ruis → tabel met harde donkere/lichte banden (volgt de nerf, zoals echt hout)
+  //  b) poriën/vezels: fijne langgerekte streepjes
+  //  c) grote vlekken: lichte kleurverschillen over de plank
+  const W = 800, H = 400;
+  const rgb = hex => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255].map(v => v.toFixed(3)); };
+  const BANDS = "0 .05 .28 .62 .34 .08 0 .03 .12 .46 .74 .3 .06 0 .08 .38 .58 .2 .02 0 .1 .52 .8 .36 .07 0";
+  const wood = ({ base, ring, pore = ring, seed, fx = .0022, fy = .042, rings = 1, pores = .3, patch = .14 }) => {
+    const [rr, rg, rb] = rgb(ring), [pr, pg, pb] = rgb(pore);
+    const R = `x='0' y='0' width='100%' height='100%'`;
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}'>`
+      + `<filter id='a' ${R}><feTurbulence type='fractalNoise' baseFrequency='${fx} ${fy}' numOctaves='5' seed='${seed}' stitchTiles='stitch'/>`
+      + `<feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/><feComponentTransfer><feFuncA type='table' tableValues='${BANDS}'/></feComponentTransfer>`
+      + `<feColorMatrix values='0 0 0 0 ${rr} 0 0 0 0 ${rg} 0 0 0 0 ${rb} 0 0 0 ${rings} 0'/></filter>`
+      + `<filter id='b' ${R}><feTurbulence type='fractalNoise' baseFrequency='0.012 0.75' numOctaves='2' seed='${seed + 1}' stitchTiles='stitch'/>`
+      + `<feColorMatrix values='0 0 0 0 ${pr} 0 0 0 0 ${pg} 0 0 0 0 ${pb} 2.4 0 0 0 -1.25'/></filter>`
+      + `<filter id='c' ${R}><feTurbulence type='fractalNoise' baseFrequency='0.0011 0.0045' numOctaves='2' seed='${seed + 2}' stitchTiles='stitch'/>`
+      + `<feColorMatrix values='0 0 0 0 1 0 0 0 0 .93 0 0 0 0 .8 1.6 0 0 0 -.7'/></filter>`
+      + (base ? `<rect width='100%' height='100%' fill='${base}'/>` : "")
+      + `<rect width='100%' height='100%' filter='url(#c)' opacity='${patch}'/>`
+      + `<rect width='100%' height='100%' filter='url(#a)'/>`
+      + `<rect width='100%' height='100%' filter='url(#b)' opacity='${pores}'/></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  };
+  // Realistischer: losse jaarringlijnen (wisselende dikte/afstand) die met ruis golvend worden vervormd
+  const rnd = s => () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+  const woodL = ({ base, ring, seed, disp = 55, fx = .0018, fy = .012, gap = [2, 7], op = [.12, .45], pores = .4, patch = .14 }) => {
+    const r = rnd(seed * 999 + 7), [rr, rg, rb] = rgb(ring);
+    let lines = "", y = 0;
+    while (y < H) {
+      const g = gap[0] + r() * (gap[1] - gap[0]); y += g;
+      const t = .5 + r() * 1.8, o = op[0] + r() * (op[1] - op[0]);
+      lines += `<rect x='-60' y='${y.toFixed(1)}' width='920' height='${t.toFixed(2)}' fill='${ring}' opacity='${o.toFixed(2)}'/>`
+        + `<rect x='-60' y='${(y - g * .45).toFixed(1)}' width='920' height='${(g * .4).toFixed(1)}' fill='${ring}' opacity='${(o * .18).toFixed(3)}'/>`;
+    }
+    const block = `<g>${lines}</g><g transform='translate(0,-${H})'>${lines}</g><g transform='translate(0,${H})'>${lines}</g>`;
+    const R = `x='0' y='0' width='100%' height='100%'`;
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}'>`
+      + `<filter id='w' x='-10%' y='-10%' width='120%' height='120%'><feTurbulence type='fractalNoise' baseFrequency='${fx} ${fy}' numOctaves='3' seed='${seed}' stitchTiles='stitch' result='n'/>`
+      + `<feDisplacementMap in='SourceGraphic' in2='n' scale='${disp}' xChannelSelector='R' yChannelSelector='G'/></filter>`
+      + `<filter id='b' ${R}><feTurbulence type='fractalNoise' baseFrequency='0.012 0.9' numOctaves='2' seed='${seed + 1}' stitchTiles='stitch'/>`
+      + `<feColorMatrix values='0 0 0 0 ${rr} 0 0 0 0 ${rg} 0 0 0 0 ${rb} 2.6 0 0 0 -1.35'/></filter>`
+      + `<filter id='c' ${R}><feTurbulence type='fractalNoise' baseFrequency='0.0011 0.0045' numOctaves='2' seed='${seed + 2}' stitchTiles='stitch'/>`
+      + `<feColorMatrix values='0 0 0 0 1 0 0 0 0 .93 0 0 0 0 .8 1.6 0 0 0 -.7'/></filter>`
+      + (base ? `<rect width='100%' height='100%' fill='${base}'/>` : "")
+      + `<rect width='100%' height='100%' filter='url(#c)' opacity='${patch}'/>`
+      + `<g filter='url(#w)'>${block}</g><rect width='100%' height='100%' filter='url(#b)' opacity='${pores}'/></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  };
+  const s = document.documentElement.style;
+  s.setProperty("--plank", woodL({ base: "#dcb57d", ring: "#8a5426", seed: 3 }));                              // ondergrond
+  s.setProperty("--plankLight", woodL({ base: "#ebd0a0", ring: "#a0652f", seed: 11 }));                        // kaarten
+  s.setProperty("--plankDark", woodL({ base: "#4b2d18", ring: "#140802", seed: 5, op: [.3, .8] }));            // hoofdknop: walnoot
+  s.setProperty("--plankStain", woodL({ base: "", ring: "#000000", seed: 12, op: [.06, .25], pores: .2, patch: .05 })); // over gebeitst hout
+  void wood;
+})();
+
+// =====================================================================
+//  Basis
+// =====================================================================
+const TIERS = [
+  { name: "Beginner", lv: [1, 2], c: "var(--t1)" }, { name: "Novice", lv: [3, 4], c: "var(--t2)" },
+  { name: "Intermediate", lv: [5, 6], c: "var(--t3)" }, { name: "Advanced", lv: [7, 8], c: "var(--t4)" },
+  { name: "Pro", lv: [9, 10], c: "var(--t5)" }, { name: "Elite", lv: [11, 12], c: "var(--t6)" },
+];
+const tierOf = l => TIERS.find(t => t.lv.includes(l));
+const LEVELS = Array.from({ length: 12 }, (_, i) => i + 1);
+
+const norm = s => s.toLowerCase().replace(/\bone\b/g, "1").replace(/\(.*?\)/g, "").replace(/[^a-z0-9]/g, "");
+// Afsluiting "In" (= "Falling in") telt niet als aparte trick: "Lunar" = "Lunar, In".
+// "Flip in" is wél een andere afsluiting en blijft apart.
+// Zonder komma alleen bij een losse naam ("Spacewalk in"); "toss in", "tap in", "swap in", "turn in" e.d. zijn eigen afsluitingen.
+const IN_FINISH = /(?:,\s*(?:falling\s+)?in|(?<=^[^,]*)(?<!(?:flip|toss|tap|swap|turn|throw|ghost|kick|cushion|swing|[0-9.]+))\s+in)$/i;
+const hasIn = name => IN_FINISH.test(name.replace(/\s*\(.*?\)\s*$/, ""));
+const baseKey = name => norm(name.replace(/\s*\(.*?\)\s*$/, "").replace(IN_FINISH, ""));
+const DB = (() => {
+  const map = new Map();
+  const exclude = new Set((window.TRICK_EXCLUDE || []).map(norm));
+  const add = (name, lvl, src) => {
+    // "Falling in" en "In" betekenen hetzelfde; we gebruiken overal "In"
+    name = name.trim().replace(/\bFalling in\b/g, "In").replace(/\bfalling in\b/g, "in");
+    for (const [re, to] of window.TRICK_RENAMES || []) name = name.replace(re, to);
+    if (!name || exclude.has(norm(name))) return;
+    const k = baseKey(name), e = map.get(k);
+    if (e) {
+      if (!e.src.includes(src)) e.src.push(src);
+      // Bewaar de naam mét afsluiting als er eerst een losse variant stond
+      if (!hasIn(e.name) && hasIn(name)) e.name = name;
+      e.variants.add(name);
+    } else map.set(k, { key: k, name, lvl, src: [src], variants: new Set([name]) });
+  };
+  for (const s of window.TRICK_SOURCES) {
+    for (const [l, str] of Object.entries(s.levels || {})) str.split("|").forEach(n => add(n, +l, s.id));
+    for (const [c, str] of Object.entries(s.jkaCategories || {})) {
+      const lvl = 2 + Math.round((c - 1) * 7 / 17);
+      str.split("|").forEach(n => add(n, lvl, s.id));
+    }
+  }
+  // Getoonde naam: altijd "[trick], In" als de trick met In wordt afgesloten (ook "Spacewalk in" → "Spacewalk, In")
+  for (const e of map.values()) {
+    const note = (e.name.match(/\s*\(.*?\)\s*$/) || [""])[0];   // bv. " (tama grip start)" bewaren
+    const bare = e.name.slice(0, e.name.length - note.length);
+    if (!hasIn(bare)) continue;
+    const base = bare.replace(IN_FINISH, "").replace(/,\s*$/, "").trim();
+    if (base) e.name = `${base}, In${note ? " " + note.trim() : ""}`;
+  }
+  const all = [...map.values()];
+  if (!window.ONLY_KWC) return all;
+  const kwcYears = t => t.src.filter(s => s.startsWith("KWC ")).map(s => +s.slice(4));
+  const minYear = window.KWC_HIGH_MIN_YEAR || 0, fromLvl = window.KWC_HIGH_FROM_LEVEL || 99;
+  return all.filter(t => {
+    const ys = kwcYears(t);
+    if (!ys.length) return false;
+    return t.lvl < fromLvl || ys.some(y => y >= minYear);   // niveau 4+: alleen KWC 2018 en later
+  });
+})();
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("kd2_" + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("kd2_" + k, JSON.stringify(v)); } catch {} },
+};
+const CFG_DEFAULT = {
+  ken:   { count: 2, random: true, levels: [1, 2] },
+  speed: { count: 1, style: "turns", levels: [1, 2], len: 6 },
+  surv:  { count: 1, style: "turns", levels: [1, 2, 3, 4], len: 12, lives: 3, hard: false, cp: 0 },
+  race:  { count: 2, levels: [1, 2], target: 5 },
+};
+let state = {
+  levels: store.get("levels", [1, 2]),
+  modes: store.get("modes", { single: true, combo: false, mods: true }),
+  custom: store.get("custom", []),
+  disabled: store.get("disabled", []),
+  counts: store.get("counts", {}),
+  stats: store.get("stats", { done: 0, streak: 0, best: 0 }),
+  cfg: store.get("cfg", {}),
+  players: store.get("players", (store.get("ken", {}).players) || []),
+};
+for (const m in CFG_DEFAULT) state.cfg[m] = { ...CFG_DEFAULT[m], ...(state.cfg[m] || {}) };
+// Alleen de naam van speler 1 blijft bewaard; de rest begint weer als Player 2, Player 3 …
+state.players.forEach((p, i) => { if (i > 0) p.name = ""; });
+const save = () => Object.keys(state).forEach(k => store.set(k, state[k]));
+
+const allTricks = () => [...DB, ...state.custom.map(t => ({ key: "c_" + norm(t.name), name: t.name, lvl: t.lvl, src: ["Custom"], custom: true }))];
+const active = t => !state.disabled.includes(t.key);
+const poolFor = levels => allTricks().filter(t => levels.includes(t.lvl) && active(t));
+const srcLabel = src => {
+  const kwc = src.filter(s => s.startsWith("KWC ")).map(s => s.slice(4));
+  return [...(kwc.length ? ["KWC " + kwc.join(", ")] : []), ...src.filter(s => !s.startsWith("KWC "))];
+};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const ytLink = n => "https://www.youtube.com/results?search_query=" + encodeURIComponent("kendama " + n.replace(/\(.*?\)/g, ""));
+const fmt = ms => { const s = Math.max(0, ms) / 1000, m = Math.floor(s / 60); return `${String(m).padStart(2, "0")}:${(s % 60).toFixed(1).padStart(4, "0")}`; };
+const long = name => name.length > 45 ? "long" : "";
+const initial = name => (name.trim()[0] || "?").toUpperCase();
+
+// ---------- Iconen ----------
+// Lijn-iconen voor de interface
+const I = {
+  ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  shuffle: '<path d="M16 4h4v4M4 20L20 4M20 16v4h-4M15 15l5 5M4 4l5 5"/>',
+  play: '<path d="M7 5l12 7-12 7z" fill="currentColor" stroke="none"/>',
+  heart: '<path d="M12 20s-7-4.4-8.6-8.7C2.2 8.2 4.3 5 7.5 5c1.9 0 3.3 1 4.5 2.6C13.2 6 14.6 5 16.5 5c3.2 0 5.3 3.2 4.1 6.3C19 15.6 12 20 12 20z"/>',
+  skip: '<path d="M5 5l9 7-9 7zM18 5v14"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  chev: '<path d="M9 6l6 6-6 6"/>',
+  clock: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/>',
+};
+const icon = (n, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24">${I[n]}</svg>`;
+// Spel-logo's: ingebrand in een houten schijfje (pyrografie). Alleen de vorm, in verbrand bruin.
+const BURN = "#3b1f0d";
+const dotB = (x, y, r = 1.8) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${BURN}" stroke="none"/>`;
+const LOGO = {
+  dare: `<g transform="rotate(-10 24 24)"><rect x="14" y="14" width="20" height="20" rx="4.5"/>${dotB(19, 19)}${dotB(29, 19)}${dotB(24, 24)}${dotB(19, 29)}${dotB(29, 29)}</g>`,
+  ken: `<text x="24" y="28.5" text-anchor="middle" font-family="Georgia,'Noto Serif',serif" font-weight="700" font-size="14.5" fill="${BURN}" stroke="none" letter-spacing=".6">KEN</text>
+    <path d="M13.5 32.5h21" stroke-width="1.6"/><path d="M13.5 15.5h21" stroke-width="1.6"/>`,
+  speed: `<circle cx="24" cy="26" r="10"/><path d="M24 26v-6M24 26l4 2.8M21 13h6M24 13v3M32.4 17.6l1.8-1.8"/>${dotB(24, 26, 1.4)}`,
+  surv: `<path d="M24 35s-11-6.8-13.3-13.4C9.3 17.4 12 12.5 16.8 12.5c3 0 5.2 1.6 7.2 4.2 2-2.6 4.2-4.2 7.2-4.2 4.8 0 7.5 4.9 6.1 9.1C35 28.2 24 35 24 35z"/>
+    <path d="M14.5 23.5h4.6l2.2-4 3.6 7.6 2.3-3.6h5.8" stroke-width="2"/>`,
+  race: `<path d="M15.5 36V12"/><path d="M15.5 13h17l-3 5 3 5h-17"/>
+    <path d="M15.5 13h4.3v5h-4.3zM24.1 13h4.3v5h-4.3zM19.8 18h4.3v5h-4.3zM28.4 18h2.6l-1.4-2.4V18z" fill="${BURN}" stroke="none"/>`,
+  tricks: `<path d="M12 15.5c3.5-1.5 8-1.5 12 1 4-2.5 8.5-2.5 12-1V33c-3.5-1.5-8-1.5-12 1-4-2.5-8.5-2.5-12-1z"/><path d="M24 16.5V34"/>
+    <path d="M15.5 20.5h5M15.5 24.5h5M15.5 28.5h3.5M27.5 20.5h5M27.5 24.5h5" stroke-width="1.5"/>`,
+};
+const CROWN = `<svg class="crown" viewBox="0 0 54 40"><path d="M4 34 L8 10 L19 22 L27 4 L35 22 L46 10 L50 34 Z" fill="#f2c14e" stroke="#c9952a" stroke-width="2" stroke-linejoin="round"/><circle cx="27" cy="4" r="3" fill="#f2c14e"/><circle cx="8" cy="10" r="2.5" fill="#f2c14e"/><circle cx="46" cy="10" r="2.5" fill="#f2c14e"/><rect x="4" y="32" width="46" height="6" rx="2" fill="#e0ab35"/></svg>`;
+
+let tt;
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 1800); }
+let audio;
+function beep(freq = 880, dur = .12, when = 0) {
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain(), t0 = audio.currentTime + when;
+    o.frequency.value = freq; o.connect(g); g.connect(audio.destination);
+    g.gain.setValueAtTime(.15, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + dur);
+    o.start(t0); o.stop(t0 + dur);
+  } catch {}
+}
+const buzz = ms => { try { navigator.userActivation && navigator.userActivation.hasBeenActive && navigator.vibrate && navigator.vibrate(ms); } catch {} };
+function countdown(cb) {
+  const el = $("cd"), num = $("cdNum"), steps = ["3", "2", "1", "GO"];
+  el.hidden = false;
+  steps.forEach((s, i) => setTimeout(() => {
+    num.textContent = s; num.style.animation = "none"; void num.offsetWidth; num.style.animation = "";
+    beep(s === "GO" ? 1320 : 660, s === "GO" ? .3 : .12); buzz(s === "GO" ? 120 : 30);
+  }, i * 750));
+  setTimeout(() => { el.hidden = true; cb(); }, steps.length * 750 - 150);
+}
+let liveT0 = null;
+setInterval(() => { const el = $("liveTimer"); if (el && liveT0 != null) el.textContent = fmt(performance.now() - liveT0); }, 50);
+
+// Niveaukiezer
+function pickerHTML(levels) {
+  return `<div class="chips">${TIERS.map((t, i) => {
+      const n = t.lv.filter(l => levels.includes(l)).length;
+      return `<button class="chip ${n === 2 ? "on" : n ? "part" : ""}" data-pt="${i}">${t.name}</button>`;
+    }).join("")}</div>
+    <div class="lvgrid">${LEVELS.map(l => `<button class="lv ${levels.includes(l) ? "on" : ""}" data-pl="${l}">${l}</button>`).join("")}</div>
+    <div class="count">${poolFor(levels).length} tricks selected · KWC scale 1–12</div>`;
+}
+function pickerToggle(e, levels) {
+  const t = e.target.closest("[data-pt]");
+  if (t) {
+    const lv = TIERS[+t.dataset.pt].lv, all = lv.every(l => levels.includes(l));
+    const n = all ? levels.filter(l => !lv.includes(l)) : [...new Set([...levels, ...lv])];
+    return n.length ? n : [...lv];
+  }
+  const b = e.target.closest("[data-pl]");
+  if (b) { const id = +b.dataset.pl, n = levels.includes(id) ? levels.filter(x => x !== id) : [...levels, id]; return n.length ? n : [id]; }
+  return null;
+}
+
+// =====================================================================
+//  Hoofdmenu, Trick van de dag, uitleg, navigatie
+// =====================================================================
+const MENU = [
+  { go: "play", logo: "dare", c: "#d0473a", name: "Dare", sub: "A random trick at your level", tags: ["Solo"], help: "dare" },
+  { go: "ken", logo: "ken", c: "#2f74c9", name: "Game of KEN", sub: "Match the trick or get a letter", tags: ["2–10 players"], help: "ken" },
+  { go: "speed", logo: "speed", c: "#d89a22", name: "Speed Ladder", sub: "A random ladder as fast as you can", tags: ["1–10", "Timer"], help: "speed" },
+  { go: "surv", logo: "surv", c: "#e06a3a", name: "Survival", sub: "Get as far as you can with limited lives", tags: ["1–10", "Lives"], help: "surv" },
+  { go: "race", logo: "race", c: "#7d55c7", name: "Race to Lace", sub: "Who lands the trick first?", tags: ["2–10", "Points"], help: "race" },
+  { go: "tricks", logo: "tricks", c: "#3f9461", name: "Trick list", sub: "All tricks, search and glossary", tags: [`${DB.length} tricks`] },
+];
+const HELP = {
+  dare: { name: "Dare", rules: [
+    "Pick one or more levels (KWC scale 1–12) and the type of dare.",
+    "Tap New dare: you get a random trick, sometimes with an extra challenge.",
+    "Landed adds to your streak, Skip resets it to 0.",
+    "Tutorial searches YouTube for the trick."] },
+  ken: { name: "Game of KEN", rules: [
+    "Players take turns being the setter. The setter sets one trick (with Random tricks on, the app picks it).",
+    "If the setter misses, the next player becomes the setter. If the setter lands it, everyone else tries the same trick.",
+    "Miss the trick and you get a letter: first K, then E, then N. The letter takes the setter's colour.",
+    "On your last letter you can use Prove it once per game: the setter has to land the trick again after the round. If they do, you get the N; if they miss, you stay in.",
+    "If two players use Prove it on the same trick, the setter does it twice: one attempt for each player. Each attempt only decides for its own player: a landed attempt gives that player the N, a missed one saves that player.",
+    "Spell K-E-N and you're out. The last player standing wins."] },
+  speed: { name: "Speed Ladder", rules: [
+    "The app builds a random ladder from your chosen levels, from easy to hard.",
+    "Land the tricks in order. Miss one and you just try it again; a miss costs no extra time.",
+    "Take turns: everyone does the same ladder with their own timer. The timer starts after 3-2-1 and stops on the last trick.",
+    "Together: one shared timer. Everyone taps their own progress; your finish time is recorded as soon as you're done.",
+    "Fastest time wins."] },
+  surv: { name: "Survival", rules: [
+    "The app builds a ladder of tricks that get harder and harder.",
+    "Land the tricks in order. A miss costs a life and you try the same trick again.",
+    "Skip moves you to the next trick; a skipped trick doesn't count as landed.",
+    "Hard mode: a miss costs a life and sends you back to the start of the ladder, or to the last checkpoint.",
+    "When you're out of lives, your run is over. Most tricks landed wins; on a tie, the fastest time."] },
+  race: { name: "Race to Lace", rules: [
+    "The app shows a random trick from your chosen levels.",
+    "After 3-2-1 everyone starts at the same time and the timer runs.",
+    "Tap the player who lands the trick first; they get a point.",
+    "If nobody lands it, skip the trick.",
+    "First to reach the set number of points wins."] },
+};
+// Houten schijfje: donkere rand, lichte kern, nerf (SVG-ruis) en het ingebrande logo
+// Kopse kant van een stam: jaarringen rond een iets uit het midden liggend hart, met schors en een droogscheurtje
+const END_GRAIN = (() => {
+  let s = 4242, out = "", r = 1.4;
+  const rand = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+  while (r < 21.4) {
+    const w = .3 + rand() * .7, o = .16 + rand() * .3;
+    out += `<circle cx="23.3" cy="24.6" r="${r.toFixed(2)}" fill="none" stroke="#8f5a2a" stroke-width="${w.toFixed(2)}" stroke-opacity="${o.toFixed(2)}"/>`;
+    r += .9 + rand() * 1.5;
+  }
+  return out;
+})();
+const logoHTML = (key, c, sm) => `<span class="badge ${sm ? "sm" : ""}"><svg viewBox="0 0 48 48" aria-hidden="true">
+    <g filter="url(#barkEdge)"><circle cx="24" cy="24" r="23.2" fill="#4e301a"/>
+      <circle cx="24" cy="24" r="23.2" fill="none" stroke="#2f1b0c" stroke-width="1.1"/></g>
+    <circle cx="24" cy="24" r="22.3" fill="#a06b38"/>
+    <circle cx="24" cy="24" r="21.8" fill="url(#endGrain)"/>
+    <g clip-path="url(#discClip)" filter="url(#ringWobble)">${END_GRAIN}
+      <circle cx="23.3" cy="24.6" r=".8" fill="#7a4a20" opacity=".7"/>
+      <path d="M23.3 24.6 L 40 15" stroke="#5c3415" stroke-width=".45" stroke-opacity=".55" fill="none"/></g>
+    <circle cx="24" cy="24" r="21.8" fill="none" stroke="#fff6e6" stroke-opacity=".35" stroke-width=".8"/>
+    <g filter="url(#burnt)" fill="none" stroke="${BURN}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${LOGO[key]}</g>
+  </svg></span>`;
+function renderMenu() {
+  $("menu").innerHTML = MENU.map(m => `<button class="mode ${m.wide ? "wide" : ""}" data-go="${m.go}">
+      ${logoHTML(m.logo, m.c)}<span><b>${m.name}</b><small>${m.sub}</small></span>
+      ${m.tags ? `<span class="tags">${m.tags.map(t => `<span class="pill">${t}</span>`).join("")}</span>` : ""}
+      ${m.help ? `<span class="q" role="button" data-help="${m.help}" aria-label="How to play ${m.name}">?</span>` : ""}</button>`).join("");
+}
+// Trick van de dag: elke dag dezelfde voor iedereen, uit de lagere en middelste niveaus
+// Kiest alleen uit de standaard KWC-lijst (DB), los van uitgezette of eigen tricks; "vandaag" = de datum in Nederland.
+function todayAmsterdam() {
+  try {
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Amsterdam", year: "numeric", month: "2-digit", day: "2-digit" })
+      .formatToParts(new Date()).map(x => [x.type, x.value]));
+    return +p.year * 10000 + +p.month * 100 + +p.day;
+  } catch {   // oude browser zonder tijdzones: benader Nederlandse tijd (UTC+1)
+    const d = new Date(Date.now() + 3600e3);
+    return d.getUTCFullYear() * 10000 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate();
+  }
+}
+function trickOfDay() {
+  const seed = todayAmsterdam();
+  const pool = DB.filter(t => t.lvl <= 6 && !t.name.includes(",") && !t.name.includes("→")).sort((a, b) => a.key < b.key ? -1 : 1);
+  let x = seed; x = (x ^ 61) ^ (x >>> 16); x = x + (x << 3); x = x ^ (x >>> 4); x = Math.imul(x, 0x27d4eb2d); x = x ^ (x >>> 15);
+  return pool[Math.abs(x) % pool.length];
+}
+function renderTod() {
+  const t = trickOfDay(); if (!t) { $("tod").hidden = true; return; }
+  $("tod").innerHTML = `<small>Trick of the day</small><b>${esc(t.name)}</b><div class="meta">Level ${t.lvl} · ${tierOf(t.lvl).name}</div>
+    <button id="todGo">${icon("play")}Try it</button>`;
+  $("todGo").onclick = () => { go("play"); current = { tricks: [t], mod: null, kind: "single", lvl: t.lvl, tod: true }; renderDare(); $("yes").disabled = $("no").disabled = false; };
+}
+function showHelp(id) {
+  const h = HELP[id]; if (!h) return;
+  $("modalBody").innerHTML = `<h3>${esc(h.name)}</h3><ol>${h.rules.map(r => `<li>${esc(r)}</li>`).join("")}</ol>`;
+  $("modalX").parentElement.hidden = false;
+  $("modal").hidden = false;
+  webSync();
+}
+const closeHelp = () => $("modal").hidden = true;
+// Vraag midden in een lopend spel: echt stoppen?
+function askQuit() {
+  $("modalBody").innerHTML = `<h3>Quit this game?</h3><p class="qtext">Your progress in this game will be lost.</p>
+    <div class="stack"><button class="btn btn-primary" data-q="keep">Keep playing</button><button class="btn btn-soft" data-q="quit">Quit</button></div>`;
+  $("modalX").parentElement.hidden = true;
+  $("modal").hidden = false;
+  webSync();
+}
+$("modalBody").addEventListener("click", e => {
+  const b = e.target.closest("[data-q]"); if (!b) return;
+  closeHelp();
+  if (b.dataset.q === "quit") leaveGame();
+});
+$("modalX").onclick = closeHelp;
+$("modal").onclick = e => { if (e.target === $("modal")) closeHelp(); };
+document.addEventListener("click", e => { const h = e.target.closest("[data-help]"); if (h) { e.stopPropagation(); e.preventDefault(); showHelp(h.dataset.help); } }, true);
+
+const VIEWS = ["home", "play", "setup", "players", "kengame", "laddergame", "racegame", "tricks"];
+let currentView = "home", navStack = [];
+function go(view) { navStack.push(currentView); show(view); }
+function goBack() {
+  if (!$("modal").hidden) { closeHelp(); return true; }
+  if (!$("win").hidden) { closeWin(); return true; }
+  if (!navStack.length) return false;
+  if (gameInProgress()) { askQuit(); return true; }
+  leaveGame(); return true;
+}
+function leaveGame() { liveT0 = null; clearLive(); show(navStack.length ? navStack.pop() : "home"); }
+// Loopt er een spel waarin al iets gebeurd is? (dan vragen we eerst of je echt wilt stoppen)
+function gameInProgress() {
+  if (currentView === "kengame") return !!G && G.phase !== "over" && undoStack.length > 0;
+  if (currentView === "laddergame") return !!L && L.ladder.length > 0 && (L.phase === "run" || L.phase === "between" || (L.phase === "ready" && L.cur > 0));
+  if (currentView === "racegame") return !!R && R.phase !== "over" && (R.phase === "run" || R.round > 1);
+  return false;
+}
+
+// ---------- Scherm aan houden tijdens een spel (Screen Wake Lock API, als de browser het kan) ----------
+let wakeLock = null;
+async function syncWakeLock() {
+  const want = ["kengame", "laddergame", "racegame"].includes(currentView) && !document.hidden;
+  try {
+    if (want && !wakeLock && "wakeLock" in navigator) {
+      wakeLock = await navigator.wakeLock.request("screen");
+      wakeLock.addEventListener("release", () => { wakeLock = null; });
+    } else if (!want && wakeLock) { const w = wakeLock; wakeLock = null; await w.release(); }
+  } catch { wakeLock = null; }   // niet ondersteund of geweigerd: gewoon doorspelen
+}
+document.addEventListener("visibilitychange", syncWakeLock);
+
+// ---------- Lopend spel bewaren, zodat een herladen tabblad (bv. iPhone) het spel niet kwijtraakt ----------
+// Tijdelijke spelstatus, geen records: wordt gewist als het spel klaar is of je naar het menu gaat.
+const LIVE_KEY = "live", LIVE_MAX_AGE = 6 * 3600 * 1000;
+function clearLive() { try { localStorage.removeItem("kd2_" + LIVE_KEY); } catch {} }
+function saveLive() {
+  const v = currentView;
+  const over = v === "kengame" ? !G || G.phase === "over"
+    : v === "laddergame" ? !L || L.phase === "results"
+    : v === "racegame" ? !R || R.phase === "over" : true;
+  if (over) { clearLive(); return; }
+  const now = performance.now();
+  store.set(LIVE_KEY, {
+    at: Date.now(), view: v, navStack, setupMode,
+    G: v === "kengame" ? G : null, undoStack: v === "kengame" ? undoStack : [],
+    L: v === "laddergame" ? { ...L, t0: L.phase === "run" ? now - L.t0 : null } : null, ladderUndo: v === "laddergame" ? ladderUndo : [],
+    R: v === "racegame" ? { ...R, t0: R.phase === "run" ? now - R.t0 : null } : null, raceUndo: v === "racegame" ? raceUndo : [],
+  });
+}
+function restoreLive() {
+  const s = store.get(LIVE_KEY, null);
+  if (!s || !s.view || Date.now() - s.at > LIVE_MAX_AGE) { clearLive(); return false; }
+  try {
+    const gone = Date.now() - s.at, now = performance.now();
+    setupMode = s.setupMode || setupMode;
+    if (s.view === "kengame" && s.G) { G = s.G; undoStack = s.undoStack || []; renderKen(); }
+    else if (s.view === "laddergame" && s.L) {
+      L = s.L; ladderUndo = s.ladderUndo || [];
+      if (L.phase === "run") { L.t0 = now - (L.t0 + gone); liveT0 = L.t0; }
+      renderLadder();
+    } else if (s.view === "racegame" && s.R) {
+      R = s.R; raceUndo = s.raceUndo || [];
+      if (R.phase === "run") { R.t0 = now - (R.t0 + gone); liveT0 = R.t0; }
+      renderRace();
+    } else { clearLive(); return false; }
+    navStack = s.navStack && s.navStack.length ? s.navStack : ["home"];
+    show(s.view);
+    toast("Game restored");
+    return true;
+  } catch { clearLive(); return false; }
+}
+window.appBack = goBack;      // gebruikt door de Android-terugknop
+// Webversie: de terugknop/-veeg van de browser gaat een scherm terug in de app i.p.v. de site te verlaten.
+// Eén "bewakings"-item in de geschiedenis zolang je niet op het hoofdmenu bent (zelfde URL, dus herladen blijft veilig).
+const IS_WEB = !window.AndroidBridge;
+let webGuard = false;
+function webSync() {
+  if (!IS_WEB || webGuard) return;
+  if (currentView !== "home" || !$("modal").hidden || !$("win").hidden) { history.pushState({ kd: 1 }, ""); webGuard = true; }
+}
+if (IS_WEB) window.addEventListener("popstate", () => { webGuard = false; goBack(); webSync(); });
+function viewInfo(v) {
+  if (v === "play") return ["Dare", "dare"];
+  if (v === "setup") return [MODES[setupMode].name, setupMode];
+  if (v === "players") return ["Players", null];
+  if (v === "kengame") return ["Game of KEN", "ken"];
+  if (v === "laddergame") return [L ? MODES[L.mode].name : "", L ? L.mode : null];
+  if (v === "racegame") return ["Race to Lace", "race"];
+  if (v === "tricks") return ["Trick list", null];
+  return ["", null];
+}
+function show(view) {
+  currentView = view;
+  VIEWS.forEach(v => $(v).hidden = v !== view);
+  const [title, help] = viewInfo(view);
+  $("appbar").hidden = view === "home";
+  $("title").textContent = title;
+  $("helpBtn").style.visibility = help ? "visible" : "hidden"; $("helpBtn").dataset.help = help || "";
+  if (view === "home") { renderMenu(); renderTod(); }
+  if (view === "tricks") renderTricks();
+  if (view === "play") renderLevels();
+  if (view === "setup") renderSetup();
+  if (view === "players") renderPlayers();
+  window.scrollTo(0, 0);
+  webSync();
+  syncWakeLock();
+  saveLive();
+}
+$("menu").onclick = e => {
+  const b = e.target.closest("[data-go]"); if (!b) return;
+  const g = b.dataset.go;
+  if (MODES[g]) { setupMode = g; go("setup"); } else go(g);
+};
+$("back").onclick = goBack;
+
+// =====================================================================
+//  Winnaarsscherm (full screen)
+// =====================================================================
+let winActions = {};
+function confettiHTML(colors) {
+  let h = "";
+  for (let i = 0; i < 40; i++) {
+    const left = (i * 37 + 7) % 100, dur = 2.6 + (i % 6) * .45, delay = -(i * .21), c = colors[i % colors.length];
+    h += `<span class="conf" style="left:${left}%;background:${c};animation-duration:${dur}s;animation-delay:${delay}s;${i % 3 === 0 ? "border-radius:50%;width:9px;height:9px" : ""}"></span>`;
+  }
+  return h;
+}
+// opts: { game, player, title, sub, stat, colors, primary:[label,fn], secondary:[label,fn] }
+function showWin(o) {
+  const el = $("win");
+  el.innerHTML = `<div class="rays"></div>${confettiHTML(o.colors)}
+    <button class="wclose" data-w="x" aria-label="Close">${icon("x")}</button>
+    <div class="game">${esc(o.game)}</div>
+    <div class="wbadge" style="--pc:${o.player.color}">${CROWN}${esc(initial(o.player.name))}</div>
+    <div class="wname">${esc(o.title)}</div><div class="wsub">${esc(o.sub)}</div>
+    ${o.stat ? `<div class="wstat">${o.stat}</div>` : ""}
+    <div class="wbtns"><button class="btn btn-primary" data-w="p">${esc(o.primary[0])}</button><button class="btn btn-soft" data-w="s">${esc(o.secondary[0])}</button></div>`;
+  winActions = { p: o.primary[1], s: o.secondary[1] };
+  el.hidden = false;
+  [523, 659, 784, 1047].forEach((f, i) => beep(f, i === 3 ? .45 : .16, i * .14));
+  buzz(200);
+  webSync();
+}
+function closeWin() { $("win").hidden = true; }
+$("win").onclick = e => { const b = e.target.closest("[data-w]"); if (!b) return; closeWin(); winActions[b.dataset.w] && winActions[b.dataset.w](); };
+document.addEventListener("keydown", e => { if (e.key === "Escape" && (!$("win").hidden || !$("modal").hidden)) goBack(); });
+const toMenu = () => { navStack = []; liveT0 = null; show("home"); };
+
+// =====================================================================
+//  Dare
+// =====================================================================
+const MODIFIERS = [
+  [1, "Land it 3 times in a row."], [1, "You get 5 attempts max."], [1, "Do it standing on one leg."],
+  [1, "Do it 5 times in a row without a miss."], [1, "Start with the tama hanging still: no swinging start."],
+  [1, "Bend your knees on every catch."], [3, "With your non-dominant hand."], [3, "Sitting on a chair."],
+  [3, "Land it within 30 seconds."], [3, "Do it 10 times: every miss resets the count to 0."],
+  [5, "Turn half a circle before you start, without stopping the tama."], [5, "Finish with an extra spike."],
+  [5, "Do 10 moshikame first, then go straight into the trick."], [7, "With your non-dominant hand, 3 times in a row."],
+  [7, "You get 3 attempts. After that it's a fail."], [9, "First try. One attempt."], [9, "Land it twice in a row without a miss."],
+];
+const descOf = t => window.TRICK_DESC[norm(t.name)] ||
+  (t.custom ? "Custom trick." : t.name.includes(",") || t.name.includes("→")
+    ? "Combo: do the parts in this order without grabbing the tama in between." : "");
+let current = null;
+function renderLevels() { $("darePicker").innerHTML = pickerHTML(state.levels); }
+function renderModes() {
+  const M = [["single", "Single trick", "One trick per dare"], ["combo", "Combo", "Two to four tricks in a row"], ["mods", "Extra challenge", "Sometimes adds an extra task"]];
+  $("modes").innerHTML = M.map(([k, t, s]) => `<button class="setting" data-m="${k}"><span><b>${t}</b><small>${s}</small></span><span class="switch ${state.modes[k] ? "on" : ""}"></span></button>`).join("");
+}
+function renderStats() { $("sDone").textContent = state.stats.done; $("sStreak").textContent = state.stats.streak; $("sBest").textContent = state.stats.best; }
+function newDare(forceKind) {
+  const lv = state.levels, pool = poolFor(lv);
+  if (!pool.length) { toast("No tricks in your selection"); return; }
+  const kinds = [];
+  if (state.modes.single) kinds.push("single");
+  if (state.modes.combo) kinds.push("combo");
+  const kind = forceKind || pick(kinds.length ? kinds : ["single"]), maxLvl = Math.max(...lv);
+  let tricks;
+  if (kind === "combo") {
+    const simple = t => !t.name.includes(",") && !t.name.includes("→") && t.name.length <= 32;
+    const first = pool.filter(simple), rest = allTricks().filter(t => t.lvl <= maxLvl && active(t) && simple(t));
+    if (!first.length || rest.length < 2) { toast("Not enough single tricks for a combo"); return; }
+    const n = 2 + Math.floor(Math.random() * (maxLvl >= 5 ? 3 : 2));
+    tricks = [pick(first)];
+    let guard = 0;
+    while (tricks.length < n && guard++ < 50) { const t = pick(rest); if (!tricks.some(x => x.key === t.key)) tricks.push(t); }
+    tricks = shuffle(tricks);
+  } else {
+    let t = pick(pool);
+    if (current && pool.length > 1) while (t.key === current.tricks[0].key) t = pick(pool);
+    tricks = [t];
+  }
+  let mod = null;
+  if (state.modes.mods && Math.random() < 0.5) mod = pick(MODIFIERS.filter(m => m[0] <= maxLvl))[1];
+  current = { tricks, mod, kind, lvl: Math.max(...tricks.map(t => t.lvl)) };
+  renderDare();
+  $("yes").disabled = $("no").disabled = false;
+}
+function renderDare() {
+  const { tricks, mod, kind, lvl } = current, T = tierOf(lvl), one = tricks[0];
+  const title = kind === "combo" ? `<ol>${tricks.map(t => `<li>${esc(t.name)}</li>`).join("")}</ol>` : esc(one.name);
+  const desc = kind === "combo" ? "Do all tricks in a row without grabbing the tama." : descOf(one);
+  $("dare").innerHTML = `<div class="overline"><span class="dot" style="--c:${T.c}"></span>${current.tod ? "Trick of the day · " : kind === "combo" ? "Combo · " : ""}Level ${lvl} · ${T.name}</div>
+    <div class="ttl ${kind === "combo" ? "" : long(one.name)}">${title}</div>${desc ? `<p class="desc">${esc(desc)}</p>` : ""}
+    ${kind === "combo" ? "" : `<div class="tags">${srcLabel(one.src).map(s => `<span class="pill">${esc(s)}</span>`).join("")}</div>`}
+    ${mod ? `<div class="note"><small>Extra challenge</small>${esc(mod)}</div>` : ""}
+    <div class="links">${kind === "combo" ? `<button class="btn btn-text" data-reroll>${icon("shuffle")}Re-roll combo</button>` : ""}${tricks.map(t => `<a class="link" href="${ytLink(t.name)}" target="_blank" rel="noopener">${icon("ext")}Tutorial${kind === "combo" ? ": " + esc(t.name) : ""}</a>`).join("")}</div>`;
+}
+function finishDare(ok) {
+  if (!current) return;
+  if (ok) {
+    state.stats.done++; state.stats.streak++; state.stats.best = Math.max(state.stats.best, state.stats.streak);
+    current.tricks.forEach(t => state.counts[t.key] = (state.counts[t.key] || 0) + 1);
+    toast(state.stats.streak > 1 ? `Landed, ${state.stats.streak} in a row` : "Landed");
+  } else state.stats.streak = 0;
+  save(); renderStats(); newDare();
+}
+$("darePicker").onclick = e => { const n = pickerToggle(e, state.levels); if (n) { state.levels = n; save(); renderLevels(); } };
+$("modes").onclick = e => {
+  const b = e.target.closest("[data-m]"); if (!b) return;
+  const k = b.dataset.m; state.modes[k] = !state.modes[k];
+  if (!state.modes.single && !state.modes.combo) state.modes[k === "single" ? "combo" : "single"] = true;
+  save(); renderModes();
+};
+$("dareGo").onclick = () => newDare();
+// Re-roll van een combo: nieuwe combo, telt niet als Skip (streak blijft staan)
+$("dare").addEventListener("click", e => { if (e.target.closest("[data-reroll]")) newDare("combo"); });
+$("yes").onclick = () => finishDare(true);
+$("no").onclick = () => finishDare(false);
+
+// =====================================================================
+//  Instellingen per spel + spelers
+// =====================================================================
+const PLAYER_COLORS = ["#d0473a", "#2f74c9", "#3f9461", "#d89a22", "#7d55c7", "#d6567f", "#1f8f8f", "#8a5a3b", "#6f9e2f", "#4a5cc0"];
+const MAX_PLAYERS = 10;
+const MODES = {
+  ken:   { name: "Game of KEN", logo: "ken", c: "#2f74c9", min: 2, style: false, random: true, extra: [] },
+  speed: { name: "Speed Ladder", logo: "speed", c: "#d89a22", min: 1, style: true,
+           extra: [{ k: "len", label: "Number of tricks", sub: "Length of the ladder", min: 3, max: 20 }] },
+  surv:  { name: "Survival", logo: "surv", c: "#e06a3a", min: 1, style: true, extra: [
+           { k: "len", label: "Number of tricks", sub: "Length of the ladder", min: 5, max: 30 },
+           { k: "lives", label: "Lives", sub: "Misses allowed before you're out", min: 1, max: 5 },
+           { k: "hard", type: "toggle", label: "Hard mode", sub: "A miss sends you back to the start of the ladder" },
+           { k: "cp", label: "Checkpoint", sub: "Every how many tricks you reach a checkpoint", min: 0, max: 15, when: c => c.hard, zero: "None" }] },
+  race:  { name: "Race to Lace", logo: "race", c: "#7d55c7", min: 2, style: false,
+           extra: [{ k: "target", label: "Points to win", sub: "First player to reach this wins", min: 1, max: 15 }] },
+};
+let setupMode = "ken";
+const stepperHTML = (key, label, sub, val, min, max, zero) => `<div class="setting"><span><b>${label}</b>${sub ? `<small>${sub}</small>` : ""}</span>
+  <span class="stepper"><button data-ck="${key}" data-d="-1" ${val <= min ? "disabled" : ""} aria-label="Less">−</button>
+  <span>${val === 0 && zero ? zero : val}</span>
+  <button data-ck="${key}" data-d="1" ${val >= max ? "disabled" : ""} aria-label="More">+</button></span></div>`;
+const toggleHTML = (key, label, sub, on) => `<button class="setting" data-toggle="${key}"><span><b>${label}</b><small>${sub}</small></span><span class="switch ${on ? "on" : ""}"></span></button>`;
+
+function renderSetup() {
+  const m = MODES[setupMode], c = state.cfg[setupMode];
+  c.count = Math.max(m.min, Math.min(MAX_PLAYERS, c.count));
+  const ps = playerList();
+  let h = `<div class="card pad" style="display:flex;align-items:center;gap:14px;margin-top:4px">${logoHTML(m.logo, m.c)}
+      <span style="flex:1"><b style="font-size:16px">${c.count} ${c.count === 1 ? "player" : "players"}</b>
+      <span style="display:flex;gap:4px;margin-top:6px">${ps.map((p, i) => `<span class="av sm" style="--pc:${p.color}">${esc(initial(pName(p, i)))}</span>`).join("")}</span></span>
+      <span class="stepper"><button data-ck="count" data-d="-1" ${c.count <= m.min ? "disabled" : ""} aria-label="Remove player">−</button>
+      <button data-ck="count" data-d="1" ${c.count >= MAX_PLAYERS ? "disabled" : ""} aria-label="Add player">+</button></span></div>`;
+  if (m.style && c.count > 1) h += `<div class="label">Play style</div><div class="seg">
+      <button data-style="turns" class="${c.style === "turns" ? "on" : ""}">Take turns</button>
+      <button data-style="together" class="${c.style === "together" ? "on" : ""}">Together</button></div>
+    <p class="hint">${c.style === "turns" ? "Everyone plays the same ladder one after another, each with their own timer." : "Everyone at once with one timer; each player taps their own progress."}</p>`;
+  if (m.random) h += `<div class="label">Tricks</div><div class="card">${toggleHTML("random", "Random tricks",
+      c.random ? "The app picks tricks from the trick list" : "No tricks on screen, you choose them yourselves", c.random)}</div>`;
+  if (!m.random || c.random) h += `<div class="label">Level</div><div class="card pad">${pickerHTML(c.levels)}</div>`;
+  const ex = m.extra.filter(x => !x.when || x.when(c));
+  if (ex.length) h += `<div class="label">Rules</div><div class="card">${ex.map(x => x.type === "toggle"
+      ? toggleHTML(x.k, x.label, x.sub, c[x.k])
+      : stepperHTML(x.k, x.label, x.sub, c[x.k], x.min, x.k === "cp" ? Math.max(0, c.len - 1) : x.max, x.zero)).join("")}</div>`;
+  const poolN = poolFor(c.levels).length;
+  if (c.len && poolN && poolN < c.len) h += `<p class="hint">Only ${poolN} tricks available at these levels, so the ladder will be ${poolN} tricks long.</p>`;
+  if (!poolN && (!m.random || c.random)) h += `<p class="hint">No tricks available at these levels. Pick other levels or turn tricks back on in the Trick list.</p>`;
+  if (c.hard && setupMode === "surv") h += `<p class="hint">${c.cp ? `You reach a checkpoint every ${c.cp} landed tricks. A miss sends you back to the last checkpoint.` : "Without checkpoints, a miss sends you all the way back to the start."}</p>`;
+  h += `<div class="dock"><button class="btn btn-primary" data-continue>Continue</button></div>`;
+  $("setup").innerHTML = h;
+}
+$("setup").onclick = e => {
+  const c = state.cfg[setupMode], m = MODES[setupMode];
+  const ck = e.target.closest("[data-ck]");
+  if (ck) {
+    const k = ck.dataset.ck, d = +ck.dataset.d;
+    const def = k === "count" ? { min: m.min, max: MAX_PLAYERS } : m.extra.find(x => x.k === k);
+    const max = k === "cp" ? Math.max(0, c.len - 1) : def.max;
+    c[k] = Math.max(def.min, Math.min(max, c[k] + d));
+    if (k === "len" && c.cp > c.len - 1) c.cp = Math.max(0, c.len - 1);
+  } else if (e.target.closest("[data-style]")) c.style = e.target.closest("[data-style]").dataset.style;
+  else if (e.target.closest("[data-toggle]")) { const k = e.target.closest("[data-toggle]").dataset.toggle; c[k] = !c[k]; }
+  else if (e.target.closest("[data-continue]")) {
+    if ((!m.random || c.random) && !poolFor(c.levels).length) { toast("No tricks available at these levels. Pick other levels or turn tricks back on."); return; }
+    go("players"); return;
+  } else { const n = pickerToggle(e, c.levels); if (!n) return; c.levels = n; }
+  save(); renderSetup();
+};
+
+function playerList() {
+  const count = state.cfg[setupMode].count;
+  while (state.players.length < count) {
+    const used = state.players.map(p => p.color);
+    state.players.push({ name: "", color: PLAYER_COLORS.find(c => !used.includes(c)) || PLAYER_COLORS[state.players.length % PLAYER_COLORS.length] });
+  }
+  return state.players.slice(0, count);
+}
+const pName = (p, i) => p.name.trim() || `Player ${i + 1}`;
+// Namen in een spel zijn altijd uniek: lege namen worden "Player N", een dubbele naam krijgt een nummer erachter ("Tom", "Tom 2")
+function uniqueNames(names) {
+  const seen = new Set();
+  return names.map(n => { let u = n, k = 2; while (seen.has(u.toLowerCase())) u = `${n} ${k++}`; seen.add(u.toLowerCase()); return u; });
+}
+const gamePlayers = extra => { const ps = playerList(), names = uniqueNames(ps.map((p, i) => pName(p, i)));
+  return ps.map((p, i) => ({ name: names[i], color: p.color, ...extra })); };
+function renderPlayers() {
+  $("playerList").innerHTML = playerList().map((p, i) => `<div class="prow">
+      <button class="av" style="--pc:${p.color}" data-pc="${i}" aria-label="Change colour of player ${i + 1}">${esc(initial(pName(p, i)))}</button>
+      <input data-pn="${i}" value="${esc(p.name)}" placeholder="Player ${i + 1}" maxlength="20"></div>`).join("");
+}
+$("playerList").oninput = e => {
+  const i = e.target.dataset.pn; if (i == null) return;
+  state.players[+i].name = e.target.value; save();
+  e.target.previousElementSibling.textContent = initial(pName(state.players[+i], +i));
+};
+$("playerList").onclick = e => {
+  const b = e.target.closest("[data-pc]"); if (!b) return;
+  const ps = playerList(), i = +b.dataset.pc, used = ps.filter((_, j) => j !== i).map(p => p.color);
+  let idx = PLAYER_COLORS.indexOf(ps[i].color);
+  for (let n = 0; n < PLAYER_COLORS.length; n++) { idx = (idx + 1) % PLAYER_COLORS.length; if (!used.includes(PLAYER_COLORS[idx])) break; }
+  state.players[i].color = PLAYER_COLORS[idx]; save();
+  b.style.setProperty("--pc", PLAYER_COLORS[idx]);
+};
+$("startGame").onclick = () => {
+  if (setupMode === "ken") { startKen(); go("kengame"); }
+  else if (setupMode === "race") { startRace(); go("racegame"); }
+  else { startLadder(setupMode, false); go("laddergame"); }
+};
+
+// =====================================================================
+//  Game of KEN
+// =====================================================================
+const LETTERS = ["K", "E", "N"];
+let G = null, undoStack = [];
+function kenTrick() {
+  if (!G.random) return null;
+  const pool = poolFor(G.levels); if (!pool.length) return null;
+  let t = pick(pool);
+  if (G.trick && pool.length > 1) while (t.key === G.trick.key) t = pick(pool);
+  return t;
+}
+const alive = () => G.players.map((p, i) => i).filter(i => !G.players[i].out);
+const nextAlive = from => { const a = alive(); return a.find(i => i > from) ?? a[0]; };
+function startKen() {
+  const c = state.cfg.ken;
+  G = { players: gamePlayers({ letters: 0, lc: [], out: false }), random: c.random, levels: [...c.levels],
+        setter: 0, cur: 0, phase: "set", trick: null, queue: [], proves: [], anim: null, winner: null };
+  G.trick = kenTrick(); undoStack = []; renderKen();
+}
+function snapshot() { undoStack.push(JSON.stringify(G)); if (undoStack.length > 50) undoStack.shift(); }
+function giveLetter(i) {
+  const p = G.players[i];
+  p.letters++; p.lc.push(G.players[G.setter].color);   // letter krijgt de kleur van de setter
+  G.anim = { p: i, l: p.letters - 1 };
+  if (p.letters >= 3) p.out = true;
+}
+function newSetRound(setter) { G.setter = setter; G.cur = setter; G.phase = "set"; G.queue = []; G.proves = []; G.trick = kenTrick(); }
+function checkWinner() { const a = alive(); if (a.length <= 1) { G.phase = "over"; G.winner = a[0] ?? null; return true; } return false; }
+function afterAttempts() {
+  if (G.proves.length) { G.phase = "prove"; G.cur = G.setter; G.proveTotal = G.proves.length; return; }
+  if (!checkWinner()) newSetRound(nextAlive(G.setter));
+}
+function nextAttempt() { if (G.queue.length) { G.cur = G.queue.shift(); G.phase = "attempt"; } else afterAttempts(); }
+function kenAction(a) {
+  snapshot(); G.anim = null;
+  const cur = G.cur;
+  if (G.phase === "set") {
+    if (a === "set") { const a2 = alive(), s = a2.indexOf(G.setter); G.queue = [...a2.slice(s + 1), ...a2.slice(0, s)]; nextAttempt(); }
+    else if (a === "miss") newSetRound(nextAlive(G.setter));
+    else if (a === "reroll") G.trick = kenTrick();
+  } else if (G.phase === "attempt") {
+    if (a === "laced") nextAttempt();
+    else if (a === "miss") {
+      if (G.players[cur].letters === 2 && !G.players[cur].proveUsed) G.phase = "third";
+      else { giveLetter(cur); if (!checkWinner()) nextAttempt(); }
+    }
+  } else if (G.phase === "third") {
+    if (a === "prove") { G.players[cur].proveUsed = true; G.proves.push(cur); nextAttempt(); }
+    else { giveLetter(cur); if (!checkWinner()) nextAttempt(); }
+  } else if (G.phase === "prove") {
+    const target = G.proves.shift();
+    if (a === "laced") giveLetter(target);
+    if (!G.proves.length && !checkWinner()) newSetRound(nextAlive(G.setter));
+  }
+  renderKen();
+  if (G.phase === "over" && G.winner != null) {
+    const w = G.players[G.winner];
+    setTimeout(() => showWin({ game: "Game of KEN", player: w, title: `${w.name} wins!`, sub: "Last player without K-E-N",
+      stat: `<span style="opacity:.7;font-weight:700">Letters</span>${LETTERS.map((L, l) => `<span class="kl ${l < w.letters ? "on" : ""}"${l < w.letters ? ` style="--lc:${w.lc[l]}"` : ""}>${L}</span>`).join("")}`,
+      colors: G.players.map(p => p.color).concat("#f2c14e"),
+      primary: ["Play again", startKen], secondary: ["Back to menu", toMenu] }), 600);
+  }
+}
+const whoHTML = p => `<span class="who"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span>${esc(p.name)}</span>`;
+const trickBlock = t => t ? `<div class="ttl ${long(t.name)}">${esc(t.name)}</div><div class="tags"><span class="pill">Level ${t.lvl}</span></div>` : "";
+function renderKen() {
+  const P = G.players;
+  $("kenBoard").innerHTML = P.map((p, i) => `<div class="kp ${G.phase !== "over" && i === G.cur ? "turn" : ""} ${p.out ? "out" : ""}" style="--pc:${p.color}">
+      <span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span>
+      <span class="nm"><span>${esc(p.name)}</span>${i === G.setter && G.phase !== "over" ? '<span class="pill">Setter</span>' : ""}${p.proveUsed ? "" : '<span class="pill" title="Prove it still available">Prove it</span>'}</span>
+      <span class="letters">${LETTERS.map((L, l) => `<span class="kl ${l < p.letters ? "on" : ""} ${G.anim && G.anim.p === i && G.anim.l === l ? "pop" : ""}"${l < p.letters ? ` style="--lc:${p.lc[l]}"` : ""}>${L}</span>`).join("")}</span>
+    </div>`).join("");
+  const cp = P[G.cur], sp = P[G.setter];
+  const btn = (cls, act, label) => `<button class="btn ${cls}" data-ka="${act}">${label}</button>`;
+  let turn = "", acts = "";
+  if (G.phase === "set") {
+    turn = `<div class="overline">${whoHTML(cp)}<span>sets a trick</span></div>${G.random ? trickBlock(G.trick) : '<p class="desc" style="margin-top:12px">Pick a trick yourself and try to land it.</p>'}
+      ${G.random && G.trick ? `<div class="links"><button class="btn btn-text" data-ka="reroll">${icon("shuffle")}Other trick</button></div>` : ""}`;
+    acts = `<div class="row2">${btn("btn-ok", "set", "Trick set")}${btn("btn-bad", "miss", "Missed")}</div>`;
+  } else if (G.phase === "attempt") {
+    turn = `<div class="overline">${whoHTML(cp)}<span>tries ${esc(sp.name)}'s trick</span></div>${G.random ? trickBlock(G.trick) : '<p class="desc" style="margin-top:12px">Copy the setter\'s trick.</p>'}`;
+    acts = `<div class="row2">${btn("btn-ok", "laced", "Laced")}${btn("btn-bad", "miss", "Missed")}</div>`;
+  } else if (G.phase === "third") {
+    turn = `<div class="overline">${whoHTML(cp)}<span>last letter</span></div><p class="desc" style="margin-top:12px">Take the N, or use your Prove it: ${esc(sp.name)} must land the trick again after this round.</p>`;
+    acts = `<div class="row2">${btn("btn-soft", "prove", "Prove it")}${btn("btn-bad", "accept", "Take the N")}</div>`;
+  } else if (G.phase === "prove") {
+    const target = P[G.proves[0]], nr = G.proveTotal - G.proves.length + 1;
+    turn = `<div class="overline">${whoHTML(sp)}<span>Prove it${G.proveTotal > 1 ? ` (${nr} of ${G.proveTotal})` : ""}</span></div>${trickBlock(G.trick)}
+      <p class="desc">If ${esc(sp.name)} lands the trick, ${esc(target.name)} gets the N. If it's missed, ${esc(target.name)} stays in the game.</p>`;
+    acts = `<div class="row2">${btn("btn-ok", "laced", "Laced")}${btn("btn-bad", "miss", "Missed")}</div>`;
+  } else if (G.phase === "over") {
+    const w = G.winner != null ? P[G.winner] : null;
+    turn = `<div class="empty"><div class="ttl">${w ? esc(w.name) + " wins" : "Draw"}</div></div>`;
+    acts = `<div class="row2">${btn("btn-primary", "again", "Play again")}${btn("btn-soft", "menu", "Menu")}</div>`;
+  }
+  $("kenTurn").innerHTML = turn;
+  $("kenActions").innerHTML = acts;
+  $("kenUndo").hidden = !undoStack.length || G.phase === "over";
+  saveLive();
+}
+$("kengame").onclick = e => {
+  const b = e.target.closest("[data-ka]"); if (!b) return;
+  if (b.dataset.ka === "again") { startKen(); return; }
+  if (b.dataset.ka === "menu") { toMenu(); return; }
+  kenAction(b.dataset.ka);
+};
+$("kenUndo").onclick = () => { if (undoStack.length) { G = JSON.parse(undoStack.pop()); G.anim = null; renderKen(); } };
+
+// =====================================================================
+//  Speed Ladder & Survival
+//  Timer: "om de beurt" = eigen timer per run; "tegelijk" = één gezamenlijke
+//  timer, ieders eindtijd wordt vastgelegd zodra hij klaar of af is.
+//  Hard mode (alleen Survival): misser = terug naar het laatste checkpoint.
+// =====================================================================
+let L = null, ladderUndo = [];
+// Ladder zonder dubbele tricks; is de pool kleiner dan de gevraagde lengte, dan wordt de ladder korter
+function buildLadder(levels, len) { return shuffle(poolFor(levels)).slice(0, len).sort((a, b) => a.lvl - b.lvl); }
+function startLadder(mode, sameLadder) {
+  const c = state.cfg[mode];
+  const ladder = sameLadder && L ? L.ladder : buildLadder(c.levels, c.len);
+  if (!sameLadder && ladder.length && ladder.length < c.len) toast(`Only ${ladder.length} tricks available at these levels`);
+  ladderUndo = [];
+  L = { mode, surv: mode === "surv", style: c.count > 1 ? c.style : "turns", ladder, lives: c.lives,
+        hard: mode === "surv" && !!c.hard, cp: mode === "surv" && c.hard ? c.cp : 0,
+        players: gamePlayers({ pos: 0, best: 0, skipped: [], misses: 0, restarts: 0, lives: c.lives, time: null, done: false, out: false }),
+        cur: 0, phase: "ready", t0: 0 };
+  liveT0 = null; renderLadder();
+}
+const ended = p => p.done || p.out;
+const landedCount = p => p.pos - p.skipped.length;
+// Tijden worden vergeleken op een tiende seconde (zoals ze op het scherm staan)
+const T10 = p => p.time == null ? Infinity : Math.round(p.time / 100);
+// Survival: wie de hele ladder uitspeelt staat altijd boven wie eruit lag; daarna meeste gelande tricks, dan snelste tijd
+const rankKey = p => L.surv ? [-p.done, -p.best, T10(p)] : p.done ? [0, T10(p)] : [1, -p.pos];
+const cmpKey = (a, b) => { const x = rankKey(a), y = rankKey(b); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] < y[i] ? -1 : 1; return 0; };
+function ranking() { return [...L.players].sort(cmpKey); }
+// Gedeelde plaats bij gelijke stand: 1, 1, 3 …
+function places(sorted) { return sorted.map((p, i) => { let j = i; while (j > 0 && cmpKey(sorted[j - 1], p) === 0) j--; return j + 1; }); }
+function ladderWin() {
+  const r = ranking(), w = r[0], n = L.ladder.length, solo = L.players.length === 1, m = MODES[L.mode];
+  if (!w || (!L.surv && !w.done) || (L.surv && w.best === 0 && !w.done)) return;
+  const tied = solo ? [w] : r.filter(p => cmpKey(p, w) === 0);
+  const stat = L.surv
+    ? `${w.best}/${n} landed${w.time != null ? ` <span style="opacity:.6">·</span> ${icon("clock")} ${fmt(w.time)}` : ""}`
+    : `${icon("clock")} ${fmt(w.time)} <span style="opacity:.6">· ${n} tricks</span>`;
+  showWin({ game: m.name, player: w,
+    title: solo ? (w.done ? "Ladder complete!" : `${w.best} tricks landed!`) : tied.length > 1 ? "It's a tie!" : `${w.name} wins!`,
+    sub: solo ? w.name : tied.length > 1 ? `Shared first place: ${tied.map(p => p.name).join(" & ")}`
+      : L.surv ? (w.done ? "Finished the whole ladder" : "Got furthest up the ladder") : `Fastest time of ${L.players.length} players`,
+    stat, colors: L.players.map(p => p.color).concat("#f2c14e"),
+    primary: ["Play again", () => startLadder(L.mode, false)], secondary: ["Back to menu", toMenu] });
+}
+function ladderAction(a, pi) {
+  const now = performance.now(), P = L.players, n = L.ladder.length;
+  if (a === "start") { ladderUndo = []; countdown(() => { L.phase = "run"; L.t0 = performance.now(); liveT0 = L.t0; renderLadder(); }); return; }
+  if (a === "again") { startLadder(L.mode, true); return; }
+  if (a === "new") { startLadder(L.mode, false); return; }
+  if (a === "menu") { toMenu(); return; }
+  if (a === "undo") {   // laatste tik terugdraaien (geland, mis of skip), inclusief leven, checkpoint-terugval en eindtijd
+    if (!ladderUndo.length) return;
+    const s = JSON.parse(ladderUndo.pop());
+    L.players = s.players; L.cur = s.cur; L.phase = s.phase;
+    liveT0 = L.phase === "run" ? L.t0 : null;
+    closeWin(); renderLadder(); return;
+  }
+  if (a === "next") {
+    ladderUndo = [];
+    L.cur++; L.phase = L.cur < P.length ? "ready" : "results"; renderLadder();
+    if (L.phase === "results") ladderWin();
+    return;
+  }
+  if (a === "stop") { ladderUndo = []; L.phase = "results"; liveT0 = null; renderLadder(); ladderWin(); return; }
+  if (L.phase !== "run") return;
+  const p = L.style === "turns" ? P[L.cur] : P[pi];
+  if (!p || ended(p)) return;
+  ladderUndo.push(JSON.stringify({ players: L.players, cur: L.cur, phase: L.phase }));
+  if (ladderUndo.length > 100) ladderUndo.shift();
+  if (a === "land" || a === "skip") {
+    if (a === "skip") p.skipped.push(p.pos);
+    p.pos++;
+    p.best = Math.max(p.best, landedCount(p));
+    if (p.pos >= n) { p.done = true; p.time = now - L.t0; beep(1200, .25); } else beep(990, .05);
+    buzz(25);
+  } else if (a === "miss") {
+    p.misses++;
+    if (L.surv) { p.lives--; if (p.lives <= 0) { p.out = true; p.time = now - L.t0; } }
+    if (L.hard && !p.out) {
+      const back = L.cp ? Math.floor(p.pos / L.cp) * L.cp : 0;
+      if (back < p.pos) { p.pos = back; p.skipped = p.skipped.filter(i => i < back); p.restarts++; toast(back ? `Back to checkpoint (trick ${back + 1})` : "Back to the start"); }
+    }
+    beep(220, .15); buzz(80);
+  }
+  if (L.style === "turns" && ended(p)) { L.phase = "between"; liveT0 = null; }
+  let finished = false;
+  if (L.style === "together" && P.every(ended)) { L.phase = "results"; liveT0 = null; finished = true; }
+  // Solo: direct door naar de uitslag en het winnaarsscherm
+  if (L.style === "turns" && P.length === 1 && ended(p)) { L.phase = "results"; finished = true; }
+  renderLadder();
+  if (finished) ladderWin();
+}
+function ladderListHTML(p) {
+  const pos = p ? p.pos : -1, skipped = p ? p.skipped : [];
+  return `<ol class="ladder">${L.ladder.map((t, i) => {
+    const cls = skipped.includes(i) ? "skip" : i < pos ? "done" : i === pos ? "now" : "";
+    const cpMark = L.cp && i > 0 && i % L.cp === 0;
+    return `<li class="${cls} ${cpMark ? "cp" : ""}"><span class="n">${cls === "done" ? icon("check") : i + 1}</span><span class="t">${esc(t.name)}</span><span class="l">lvl ${t.lvl}</span></li>`;
+  }).join("")}</ol>`;
+}
+const livesHTML = p => L.surv ? `<span class="lives" aria-label="${p.lives} lives">${Array.from({ length: L.lives }, (_, i) => icon("heart", i < p.lives ? "on" : "off")).join("")}</span>` : "";
+function ringHTML(time, progress, sub, running) {
+  const R = 84, C = 2 * Math.PI * R;
+  return `<div class="ring ${running ? "" : "idle"}"><svg viewBox="0 0 190 190">
+      <circle cx="95" cy="95" r="${R}" fill="none" stroke="rgba(120,80,40,.22)" stroke-width="13"/>
+      <circle cx="95" cy="95" r="${R + 6.5}" fill="none" stroke="rgba(255,245,225,.5)" stroke-width="1"/>
+      <circle cx="95" cy="95" r="${R}" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${Math.max(0.001, C * progress)} ${C}" transform="rotate(-90 95 95)" style="transition:stroke-dasharray .35s"/>
+      <defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#6a3a18"/><stop offset="1" stop-color="#3b1f0d"/></linearGradient></defs></svg>
+    <div class="tm"><b id="liveTimer">${fmt(time)}</b><small>${sub}</small></div></div>`;
+}
+function resultsHTML() {
+  const P = ranking(), n = L.ladder.length, pl = places(P);
+  return `<div class="label" style="margin-top:4px">Results</div>
+    <div class="card">${P.map((p, i) => `<div class="rank ${pl[i] === 1 ? "me" : ""}"><span class="pos">${pl[i]}</span><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><b>${esc(p.name)}</b>
+      <span class="v">${L.surv ? `${p.best}/${n} landed${p.time != null ? " · " + fmt(p.time) : ""}`
+                               : p.done ? fmt(p.time) + (p.misses ? ` · ${p.misses} missed` : "") : `not finished (${p.pos}/${n})`}</span></div>`).join("")}</div>
+    <div class="label">Ladder</div><div class="card" style="padding:4px 12px">${ladderListHTML(null)}</div>
+    <div class="dock"><div class="row2"><button class="btn btn-soft" data-la="again">Same ladder</button><button class="btn btn-primary" data-la="new">New ladder</button></div>${undoBtn()}</div>`;
+}
+const undoBtn = () => ladderUndo.length ? `<div class="center"><button class="btn btn-text" data-la="undo">Undo last tap</button></div>` : "";
+function runButtons(i) {
+  const d = i != null ? ` data-p="${i}"` : "";
+  if (L.surv) return `<div class="row3"><button class="btn btn-ok" data-la="land"${d}>Landed</button><button class="btn btn-bad" data-la="miss"${d}>Missed</button>
+      <button class="btn btn-soft" data-la="skip"${d} aria-label="Skip trick">${icon("skip")}Skip</button></div>`;
+  return `<div class="row2"><button class="btn btn-ok" data-la="land"${d}>Landed</button><button class="btn btn-bad" data-la="miss"${d}>Missed</button></div>`;
+}
+function renderLadder() {
+  const P = L.players, n = L.ladder.length, el = $("laddergame");
+  saveLive();
+  if (!n) { el.innerHTML = `<div class="empty">No tricks found at this level.</div>`; return; }
+  if (L.phase === "results") { el.innerHTML = resultsHTML(); return; }
+  const run = L.phase === "run";
+  const infoTags = `<div class="tags" style="justify-content:center">${L.hard ? `<span class="pill">Hard mode · ${L.cp ? `checkpoint every ${L.cp}` : "no checkpoints"}</span>` : ""}<span class="pill">${n} tricks</span>${L.surv ? `<span class="pill">${L.lives} lives</span>` : ""}</div>`;
+  let h = "";
+  if (L.style === "turns") {
+    const p = P[L.cur];
+    const shown = run ? performance.now() - L.t0 : L.phase === "between" ? p.time : 0;
+    h += ringHTML(shown, p.pos / n, run ? `Trick ${Math.min(p.pos + 1, n)} of ${n}` : L.phase === "between" ? (p.done ? "Done" : "Run over") : "Ready to start", run);
+    if (!run) h += infoTags;
+    if (P.length > 1) h += `<div class="label">Players</div><div class="card">${P.map((q, i) => `<div class="rank ${i === L.cur ? "me" : ""}">
+        <span class="av sm" style="--pc:${q.color}">${esc(initial(q.name))}</span><b>${esc(q.name)}</b><span class="v">${q.time != null ? (L.surv ? q.best + "/" + n : q.done ? fmt(q.time) : "not finished") : i === L.cur ? "up now" : ""}</span></div>`).join("")}</div>`;
+    if (L.phase === "ready") {
+      h += `<div class="card pad" style="margin-top:12px"><div class="overline" style="justify-content:space-between">${whoHTML(p)}${livesHTML(p)}</div>
+        <p class="desc">Press Start. The timer begins after 3-2-1.</p></div>
+        <div class="label">Ladder</div><div class="card" style="padding:4px 12px">${ladderListHTML(null)}</div>
+        <div class="dock"><button class="btn btn-primary" data-la="start">${icon("play")}Start</button></div>`;
+    } else if (run) {
+      const t = L.ladder[p.pos];
+      h += `<div class="card pad" style="margin-top:12px"><div class="overline" style="justify-content:space-between">${whoHTML(p)}${livesHTML(p)}</div>
+        <div class="ttl ${long(t.name)}">${esc(t.name)}</div>
+        <div class="tags"><span class="pill">Level ${t.lvl}</span>${p.misses ? `<span class="pill">${p.misses}× missed</span>` : ""}</div></div>
+        <div class="dock" style="margin-top:0">${runButtons(null)}${undoBtn()}</div>
+        <div class="label" style="margin-top:4px">Ladder</div><div class="card" style="padding:4px 12px">${ladderListHTML(p)}</div>`;
+    } else if (L.phase === "between") {
+      const res = p.done
+        ? (L.surv ? `${p.best} of ${n} tricks landed in ${fmt(p.time)}.` : `Ladder complete in ${fmt(p.time)}${p.misses ? `, ${p.misses}× missed` : ""}.`)
+        : `Out of lives. ${p.best} of ${n} tricks landed.`;
+      const last = L.cur >= P.length - 1;
+      h += `<div class="card pad" style="margin-top:12px"><div class="overline">${whoHTML(p)}</div><div class="ttl">${p.done ? "Done!" : "Run over"}</div><p class="desc">${res}</p></div>
+        <div class="dock"><button class="btn btn-primary" data-la="next">${last ? "See results" : `Next: ${esc(P[L.cur + 1].name)}`}</button>${undoBtn()}</div>`;
+    }
+  } else {
+    const done = P.filter(ended).length;
+    h += ringHTML(run ? performance.now() - L.t0 : 0, done / P.length, run ? `${done} of ${P.length} done` : "Ready to start", run);
+    if (L.phase === "ready") {
+      h += infoTags + `<div class="card pad" style="margin-top:12px"><p class="desc" style="margin:0">${P.length} players at once. The timer starts after 3-2-1; everyone taps their own progress.</p></div>
+        <div class="label">Ladder</div><div class="card" style="padding:4px 12px">${ladderListHTML(null)}</div>
+        <div class="dock"><button class="btn btn-primary" data-la="start">${icon("play")}Start</button></div>`;
+    } else {
+      h += `<div class="card" style="margin-top:12px">${P.map((p, i) => {
+        const t = L.ladder[p.pos];
+        const status = p.done ? `<div class="fin">Done in ${fmt(p.time)}</div>` : p.out ? `<div class="fin muted">Out of lives · ${p.best}/${n} landed</div>` : `<div class="cur">${esc(t.name)}</div>`;
+        return `<div class="pcard ${p.out ? "out" : ""}" style="--pc:${p.color}">
+          <div class="top"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><b>${esc(p.name)}</b>${livesHTML(p)}<span class="muted" style="font-weight:700">${p.pos}/${n}</span></div>
+          <div class="bar"><i style="width:${p.pos / n * 100}%"></i></div>${status}${ended(p) ? "" : runButtons(i)}</div>`;
+      }).join("")}</div>
+      <div class="card" style="margin-top:12px"><details><summary>${icon("chev", "chev")}View ladder</summary><div style="padding:0 12px 8px">${ladderListHTML(null)}</div></details></div>
+      ${undoBtn()}<div class="center"><button class="btn btn-text" data-la="stop">Stop and see results</button></div>`;
+    }
+  }
+  el.innerHTML = h;
+}
+$("laddergame").onclick = e => { const b = e.target.closest("[data-la]"); if (b) ladderAction(b.dataset.la, b.dataset.p != null ? +b.dataset.p : null); };
+
+// =====================================================================
+//  Race to Lace
+// =====================================================================
+let R = null, raceUndo = [];
+function raceTrick() {
+  const pool = poolFor(R.levels); if (!pool.length) return null;
+  let t = pick(pool);
+  if (R.trick && pool.length > 1) while (t.key === R.trick.key) t = pick(pool);
+  return t;
+}
+function startRace() {
+  const c = state.cfg.race;
+  R = { players: gamePlayers({ score: 0 }), target: c.target, levels: [...c.levels], trick: null, phase: "ready", t0: 0, round: 1, last: null, winner: null };
+  R.trick = raceTrick(); raceUndo = []; liveT0 = null; renderRace();
+}
+function raceAction(a, pi) {
+  if (a === "start") { countdown(() => { R.phase = "run"; R.t0 = performance.now(); liveT0 = R.t0; renderRace(); }); return; }
+  if (a === "reroll") { R.trick = raceTrick(); renderRace(); return; }
+  if (a === "again") { startRace(); return; }
+  if (a === "menu") { toMenu(); return; }
+  if (a === "undo") { if (raceUndo.length) { R = JSON.parse(raceUndo.pop()); liveT0 = null; renderRace(); } return; }
+  if (R.phase !== "run") return;
+  raceUndo.push(JSON.stringify({ ...R, phase: "ready" }));
+  const time = performance.now() - R.t0;
+  liveT0 = null;
+  if (a === "win") {
+    const p = R.players[pi]; p.score++; R.last = { name: p.name, color: p.color, time };
+    beep(1200, .25); buzz(60);
+    if (p.score >= R.target) {
+      R.phase = "over"; R.winner = pi; renderRace();
+      const others = R.players.map(q => q.score).sort((a, b) => b - a).join(" – ");
+      setTimeout(() => showWin({ game: "Race to Lace", player: p, title: `${p.name} wins!`, sub: `First to ${R.target} ${R.target === 1 ? "point" : "points"}`,
+        stat: `${others}`, colors: R.players.map(q => q.color).concat("#f2c14e"),
+        primary: ["Play again", startRace], secondary: ["Back to menu", toMenu] }), 400);
+      return;
+    }
+  } else R.last = { name: null, time };
+  R.round++; R.trick = raceTrick(); R.phase = "ready"; renderRace();
+}
+function renderRace() {
+  const P = R.players;
+  let h = `<div class="label" style="margin-top:4px">Standings · first to ${R.target}</div><div class="card">${P.map(p => `<div class="rank" style="display:block">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><b style="flex:1">${esc(p.name)}</b><span class="v">${p.score} / ${R.target}</span></div>
+      <div class="bar" style="--pc:${p.color}"><i style="width:${p.score / R.target * 100}%"></i></div></div>`).join("")}</div>`;
+  if (R.phase === "over") {
+    h += `<div class="card pad" style="margin-top:12px"><div class="ttl" style="text-align:center">${esc(P[R.winner].name)} wins</div></div>
+      <div class="dock"><div class="row2"><button class="btn btn-primary" data-ra="again">Play again</button><button class="btn btn-soft" data-ra="menu">Menu</button></div></div>`;
+  } else {
+    const t = R.trick, run = R.phase === "run";
+    h += `<div class="card" style="margin-top:12px"><div class="timerbar ${run ? "" : "idle"}" id="liveTimer">${fmt(run ? performance.now() - R.t0 : 0)}</div></div>`;
+    h += `<div class="card pad" style="margin-top:12px"><div class="overline">${t ? `<span class="dot" style="--c:${tierOf(t.lvl).c}"></span>` : ""}Round ${R.round}${t ? ` · level ${t.lvl}` : ""}</div>
+      <div class="ttl ${t ? long(t.name) : ""}">${t ? esc(t.name) : "No trick found"}</div>
+      ${R.last && R.phase === "ready" ? `<p class="desc">Last round: ${R.last.name ? `${esc(R.last.name)} in ${fmt(R.last.time)}` : "nobody"}</p>` : ""}
+      ${R.phase === "ready" ? `<div class="links"><button class="btn btn-text" data-ra="reroll">${icon("shuffle")}Other trick</button></div>` : ""}</div>`;
+    if (R.phase === "ready") {
+      h += `<div class="dock"><button class="btn btn-primary" data-ra="start">${icon("play")}Start</button>
+        ${raceUndo.length ? `<div class="center"><button class="btn btn-text" data-ra="undo">Undo last round</button></div>` : ""}</div>`;
+    } else {
+      h += `<div class="label">Who landed it first?</div><div class="whogrid">${P.map((p, i) => `<button data-ra="win" data-p="${i}"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><span>${esc(p.name)}</span></button>`).join("")}</div>
+        <div class="center"><button class="btn btn-text" data-ra="skip">Nobody, next trick</button></div>`;
+    }
+  }
+  $("racegame").innerHTML = h;
+  saveLive();
+}
+$("racegame").onclick = e => { const b = e.target.closest("[data-ra]"); if (b) raceAction(b.dataset.ra, b.dataset.p != null ? +b.dataset.p : null); };
+
+// =====================================================================
+//  Tricklijst
+// =====================================================================
+function renderTricks() {
+  const q = norm($("search").value);
+  const open = new Set([...document.querySelectorAll("#trickList details[open]")].map(d => d.dataset.l));
+  $("trickList").innerHTML = LEVELS.map(l => {
+    const ts = allTricks().filter(t => t.lvl === l && (!q || norm(t.name).includes(q)));
+    if (q && !ts.length) return "";
+    return `<details data-l="${l}" ${q || open.has(String(l)) ? "open" : ""}><summary>${icon("chev", "chev")}<span class="dot" style="--c:${tierOf(l).c}"></span>Level ${l} · ${tierOf(l).name}<span class="cnt">${ts.length}</span></summary>`
+      + ts.map(t => `<div class="trow ${state.disabled.includes(t.key) ? "off" : ""}" data-k="${esc(t.key)}">
+        <span class="nm">${esc(t.name)}<small>${srcLabel(t.src).join(" · ")}</small></span>
+        <span class="c">${state.counts[t.key] ? state.counts[t.key] + "x" : ""}</span>
+        ${t.custom ? `<button data-del="${esc(t.name)}" aria-label="Delete">${icon("x")}</button>` : ""}</div>`).join("") + "</details>";
+  }).join("");
+}
+$("search").oninput = renderTricks;
+$("trickList").onclick = e => {
+  const del = e.target.closest("[data-del]");
+  if (del) { state.custom = state.custom.filter(t => t.name !== del.dataset.del); save(); renderTricks(); return; }
+  const row = e.target.closest("[data-k]"); if (!row) return;
+  const k = row.dataset.k;
+  state.disabled = state.disabled.includes(k) ? state.disabled.filter(x => x !== k) : [...state.disabled, k];
+  save(); renderTricks();
+};
+$("addForm").onsubmit = e => {
+  e.preventDefault();
+  const name = $("addName").value.trim();
+  if (!name || allTricks().some(t => norm(t.name) === norm(name))) { toast("This trick already exists"); return; }
+  state.custom.push({ lvl: +$("addLvl").value, name });
+  $("addName").value = ""; save(); renderTricks(); toast("Trick added");
+};
+$("reset").onclick = () => {
+  if (!confirm("Clear dare stats?")) return;
+  state.counts = {}; state.stats = { done: 0, streak: 0, best: 0 }; save(); renderStats(); renderTricks();
+};
+
+// =====================================================================
+//  Trick aanvragen → Google Formulier → Google Sheet
+//  Vul hieronder het formulieradres en de veld-ID's in (uit de "vooraf ingevulde link").
+//  Zolang dit leeg is, worden aanvragen op het toestel bewaard en later verstuurd.
+// =====================================================================
+// Formulier "Kendama trick-aanvragen" (Google Drive van Julian), gekoppeld aan de spreadsheet "Kendama trick-aanvragen"
+const REQUEST_FORM = {
+  url: "https://docs.google.com/forms/d/e/1FAIpQLSeRkQGoMxBSxC03ZLMf769IixNOVOTNYCyxdXGOBZwaYfgbCQ/formResponse",
+  nameField: "entry.32271159",      // Tricknaam (verplicht)
+  levelField: "entry.736413747",    // Niveau (verplicht)
+  instaField: "entry.1476862343",   // Instagram-handle (optioneel)
+};
+const formReady = () => !!(REQUEST_FORM.url && REQUEST_FORM.nameField && REQUEST_FORM.levelField);
+async function postForm(data) {
+  const body = new URLSearchParams(data).toString();
+  // In de Android-app gaat het via de native brug (betrouwbaar vanuit een lokale pagina)
+  if (window.AndroidBridge && window.AndroidBridge.post) return window.AndroidBridge.post(REQUEST_FORM.url, body);
+  // Webversie: no-cors-POST naar Google Forms (antwoord is niet leesbaar, maar een netwerkfout geeft wel een fout).
+  if (navigator.onLine === false) return false;
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 12000);
+  try {
+    await fetch(REQUEST_FORM.url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body, signal: ctl.signal });
+    return true;
+  } finally { clearTimeout(to); }
+}
+const pendingReqs = () => store.get("reqQueue", []);
+async function sendRequest(r) {
+  if (!formReady()) return false;
+  try {
+    const data = { [REQUEST_FORM.nameField]: r.name, [REQUEST_FORM.levelField]: `${r.lvl} (${tierOf(r.lvl).name})` };
+    if (r.insta) data[REQUEST_FORM.instaField] = r.insta;
+    return await postForm(data);
+  } catch { return false; }
+}
+let flushing = false;
+async function flushRequests() {
+  const q = pendingReqs(); if (flushing || !q.length || !formReady()) { renderReqPending(); return; }
+  flushing = true;
+  const left = [];
+  for (const r of q) if (!(await sendRequest(r))) left.push(r);
+  // Tussendoor nieuw opgeslagen aanvragen niet kwijtraken
+  const added = pendingReqs().filter(r => !q.some(x => x.at === r.at && x.name === r.name));
+  store.set("reqQueue", [...left, ...added]); flushing = false; renderReqPending();
+  const sent = q.length - left.length;
+  if (sent) toast(sent === 1 ? "Your saved trick request has been sent" : `${sent} saved trick requests have been sent`);
+}
+function renderReqPending() {
+  const n = pendingReqs().length, el = $("reqPending");
+  el.hidden = !n;
+  el.textContent = n ? `${n} ${n === 1 ? "request is" : "requests are"} waiting to be sent; they'll go out automatically when possible.` : "";
+}
+$("reqLvl").innerHTML = LEVELS.map(l => `<option value="${l}">Lvl ${l}</option>`).join("");
+$("reqInsta").value = store.get("reqInsta", "");
+$("srcHint").textContent = window.ONLY_KWC
+  ? "Source: the official Kendama World Cup trick lists. Levels 1–3 from all KWC years (2015–2019, 2021–2023), level 4 and up only from KWC 2018 and later. The level comes from the most recent KWC list the trick appears in. Other competitions will follow later."
+  : "Sources: official trick lists of the Kendama World Cup (2015–2019, 2021–2023), North American Kendama Open 2022, European Kendama Open (2013, 2016), British Kendama Open (2014, 2015), Battle at the Beach 2025, Kendama Kentei, the Japan Kendama Association (Skill Level Challenge and Aerial), Toyskills, Sweets Kendamas \"First 50\" and the SkillAddicts trick ladder. The level comes from the most recent KWC list the trick appears in; other tricks are mapped to a comparable KWC level.";
+$("reqForm").onsubmit = async e => {
+  e.preventDefault();
+  const name = $("reqName").value.trim(), lvl = +$("reqLvl").value;
+  if (!name) return;
+  if (allTricks().some(t => norm(t.name) === norm(name))) { toast("This trick is already in the list"); return; }
+  // Instagram-handle optioneel; altijd met @ ervoor, spaties eruit
+  const raw = $("reqInsta").value.trim().replace(/\s+/g, "");
+  const insta = raw ? "@" + raw.replace(/^@+/, "") : "";
+  const r = { name, lvl, insta, at: Date.now() };
+  const ok = await sendRequest(r);
+  if (!ok) store.set("reqQueue", [...pendingReqs(), r]);
+  $("reqName").value = "";
+  store.set("reqInsta", $("reqInsta").value.trim());   // handle onthouden voor de volgende keer
+  toast(ok ? "Thanks! Your request has been sent" : "No connection. Saved, it will be sent automatically when you're back online");
+  renderReqPending();
+};
+$("reqLink").onclick = () => { go("tricks"); setTimeout(() => $("reqName").focus(), 50); };
+window.addEventListener("online", flushRequests);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) flushRequests(); });
+setInterval(() => { if (pendingReqs().length) flushRequests(); }, 120000);
+flushRequests();
+
+// Feedback-link en versienummer (onderaan de Trick list)
+$("appVersion").textContent = APP_VERSION;
+if (FEEDBACK_FORM_URL) $("feedbackLink").href = FEEDBACK_FORM_URL;
+$("feedbackLink").onclick = e => { if (!FEEDBACK_FORM_URL) { e.preventDefault(); toast("Feedback form coming soon"); } };
+
+$("glList").innerHTML = window.GLOSSARY.map(([w, d]) => `<p><b>${esc(w)}</b>: ${esc(d)}</p>`).join("");
+$("addLvl").innerHTML = LEVELS.map(l => `<option value="${l}">Lvl ${l}</option>`).join("");
+renderModes(); renderStats();
+if (!restoreLive()) show("home");
+
+// Offline werken (alleen in de webversie; in de Android-app staan de bestanden al op het toestel)
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js?v=" + encodeURIComponent(APP_VERSION)).catch(() => {}));
+}
+</script>
+</body>
+</html>
