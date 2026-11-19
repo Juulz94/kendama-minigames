@@ -4,7 +4,7 @@
 // bij geen verbinding de opgeslagen kopie. Oude caches worden opgeruimd zodra een nieuwe versie actief wordt.
 const VERSION = new URL(self.location.href).searchParams.get("v") || "dev";
 const CACHE = "kendama-" + VERSION;
-const FILES = ["./", "index.html", "tricks.js", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png", "og-image.png"];
+const FILES = ["./", "index.html", "tricks.js", "manifest.webmanifest", "favicon.svg", "favicon-32.png", "favicon-48.png", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png", "icon-512-maskable.png", "og-image.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting()));
