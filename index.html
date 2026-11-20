@@ -470,6 +470,9 @@
   <button class="card pad" id="reqLink" style="width:100%;margin-top:14px;border:none;text-align:left;display:flex;align-items:center;gap:12px">
     <span style="flex:1"><b class="serif" style="font-size:16px;display:block">Missing a trick?</b><span class="muted" style="font-size:13px">Request it and we'll see if it can be added.</span></span>
     <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button class="card pad" id="soundLink" style="width:100%;margin-top:10px;border:none;text-align:left;display:flex;align-items:center;gap:12px">
+    <span style="flex:1"><b class="serif" style="font-size:16px;display:block">Sound</b><span class="muted" style="font-size:13px">Beeps and chimes during the games.</span></span>
+    <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
   <div class="about"><div class="fbrow"><a class="link" id="feedbackLinkHome" href="#" target="_blank" rel="noopener">Send feedback</a><span class="ver" id="appVersionHome"></span></div></div>
 </section>
 
@@ -514,6 +517,9 @@
 
 <!-- Race to Lace -->
 <section id="racegame" hidden></section>
+
+<!-- Geluid -->
+<section id="sound" hidden></section>
 
 <!-- Tricklijst -->
 <section id="tricks" hidden>
@@ -722,7 +728,18 @@ let state = {
   stats: store.get("stats", { done: 0, streak: 0, best: 0 }),
   cfg: store.get("cfg", {}),
   players: store.get("players", (store.get("ken", {}).players) || []),
+  sound: store.get("sound", {}),
 };
+const SOUND_CATS = [
+  ["timers", "Countdown and timers", "3, 2, 1, Go and timer beeps"],
+  ["results", "Laced, Missed and Skip", "After each trick"],
+  ["survival", "Survival", "Lost life, checkpoint, out of lives"],
+  ["ken", "Game of KEN", "Getting a letter, being out"],
+  ["race", "Race to Lace", "A point for the winner of a round"],
+  ["victory", "Winner screen", "When a game is won or finished"],
+  ["totd", "Trick of the Day", "When you lace it today"],
+];
+state.sound = { on: true, ...Object.fromEntries(SOUND_CATS.map(c => [c[0], true])), ...state.sound };
 for (const m in CFG_DEFAULT) state.cfg[m] = { ...CFG_DEFAULT[m], ...(state.cfg[m] || {}) };
 // Alleen de naam van speler 1 blijft bewaard; de rest begint weer als Player 2, Player 3 …
 state.players.forEach((p, i) => { if (i > 0) p.name = ""; });
@@ -795,14 +812,55 @@ const CROWN = `<svg class="crown" viewBox="0 0 54 40"><path d="M4 34 L8 10 L19 2
 let tt;
 function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("show"), 1800); }
 let audio;
-function beep(freq = 880, dur = .12, when = 0) {
+// Houten geluidjes (zachte marimba-achtige tonen), allemaal in E zodat ze bij elkaar passen
+function note(freq, when, len, gain = 1) {
   try {
     audio = audio || new (window.AudioContext || window.webkitAudioContext)();
-    const o = audio.createOscillator(), g = audio.createGain(), t0 = audio.currentTime + when;
-    o.frequency.value = freq; o.connect(g); g.connect(audio.destination);
-    g.gain.setValueAtTime(.15, t0); g.gain.exponentialRampToValueAtTime(.001, t0 + dur);
-    o.start(t0); o.stop(t0 + dur);
+    if (audio.state === "suspended") audio.resume();
+    const t0 = audio.currentTime + when, g0 = gain * 0.3;
+    const out = audio.createGain(); out.connect(audio.destination);
+    const o1 = audio.createOscillator(), o2 = audio.createOscillator(), g1 = audio.createGain(), g2 = audio.createGain();
+    o1.type = "sine"; o1.frequency.setValueAtTime(freq * 1.01, t0); o1.frequency.exponentialRampToValueAtTime(freq, t0 + 0.03);
+    o2.type = "sine"; o2.frequency.value = freq * 3.9;
+    g1.gain.setValueAtTime(0.0001, t0); g1.gain.exponentialRampToValueAtTime(g0, t0 + 0.004); g1.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+    g2.gain.setValueAtTime(0.0001, t0); g2.gain.exponentialRampToValueAtTime(g0 * 0.25, t0 + 0.003); g2.gain.exponentialRampToValueAtTime(0.0001, t0 + len * 0.25);
+    o1.connect(g1).connect(out); o2.connect(g2).connect(out);
+    o1.start(t0); o2.start(t0); o1.stop(t0 + len + 0.05); o2.stop(t0 + len + 0.05);
   } catch {}
+}
+const E4 = 329.63, G4s = 415.3, B4 = 493.88, E5 = 659.25, G5s = 830.61, B5 = 987.77, E6 = 1318.5;
+const SOUNDS = {
+  count:  ["timers", () => note(523.25, 0, 0.22)],
+  go:     ["timers", () => { note(1046.5, 0, 0.55); note(1567.98, 0, 0.5, 0.7); }],
+  chime:  ["timers", () => { note(E5, 0, 0.28, 0.8); note(B5, 0.15, 0.4, 0.8); }],
+  ten:    ["timers", () => { note(740, 0, 0.12); note(740, 0.13, 0.12); note(740, 0.26, 0.12); }],
+  tick:   ["timers", () => note(E6, 0, 0.14, 0.9)],
+  end:    ["timers", () => { note(E6, 0, 0.16, 0.9); note(B5, 0.16, 0.16, 0.9); note(E5, 0.32, 0.9); note(E4, 0.32, 0.9, 0.7); }],
+  laced:  ["results", () => { note(E5, 0, 0.14, 0.9); note(B5, 0.1, 0.32, 0.9); }],
+  streak: ["results", () => { [E5, G5s, B5].forEach((f, i) => note(f, i * 0.08, 0.18, 0.85)); note(E6, 0.24, 0.55); }],
+  missed: ["results", () => { note(392, 0, 0.22, 0.7); note(E4, 0.13, 0.35, 0.7); }],
+  skip:   ["results", () => note(880, 0, 0.09, 0.5)],
+  life:       ["survival", () => { note(E5, 0, 0.18, 0.9); note(B4, 0.16, 0.18, 0.9); note(E4, 0.32, 0.55); }],
+  checkpoint: ["survival", () => { note(B5, 0, 0.12, 0.85); note(E6, 0.1, 0.5); note(E5, 0.1, 0.5, 0.5); }],
+  outlives:   ["survival", () => { note(E5, 0, 0.22, 0.9); note(B4, 0.22, 0.22, 0.9); note(G4s, 0.44, 0.3, 0.9); note(E4, 0.7, 1.0); }],
+  letter: ["ken", () => { note(246.94, 0, 0.3); note(E4, 0.14, 0.3, 0.8); }],
+  kenout: ["ken", () => { note(E5, 0, 0.2, 0.9); note(554.37, 0.2, 0.2, 0.9); note(B4, 0.4, 0.2, 0.9); note(E4, 0.6, 0.8); }],
+  point:  ["race", () => { note(E5, 0, 0.1, 0.9); note(G5s, 0.09, 0.1, 0.9); note(B5, 0.18, 0.35); }],
+  victory:["victory", () => { [E5, G5s, B5, E6].forEach((f, i) => note(f, i * 0.12, 0.25, 0.9)); note(E6, 0.5, 1.1); note(B5, 0.5, 1.1, 0.7); note(E5, 0.5, 1.1, 0.7); }],
+  totd:   ["totd", () => { note(B5, 0, 0.14, 0.9); note(E6, 0.12, 0.5); note(G5s * 2, 0.12, 0.45, 0.4); }],
+};
+// Speelt een geluid, tenzij de hoofdschakelaar of de schakelaar van die categorie uit staat
+function snd(name, force) {
+  const d = SOUNDS[name]; if (!d) return;
+  if (!force && !(state.sound.on && state.sound[d[0]])) return;
+  d[1]();
+}
+// Voor een aftellende timer: roep aan met de resterende tijd vóór en na elke update.
+// 1 minuut en 30 sec: belletje, 10 sec: drie blipjes, laatste 3 sec: tik per seconde, bij 0: Time's up.
+function timerSound(prevMs, nowMs) {
+  const sec = ms => Math.ceil(ms / 1000), p = sec(prevMs), n = sec(nowMs);
+  if (p === n) return;
+  if (n === 60 || n === 30) snd("chime"); else if (n === 10) snd("ten"); else if (n >= 1 && n <= 3) snd("tick"); else if (n === 0) snd("end");
 }
 const buzz = ms => { try { navigator.userActivation && navigator.userActivation.hasBeenActive && navigator.vibrate && navigator.vibrate(ms); } catch {} };
 function countdown(cb) {
@@ -810,7 +868,7 @@ function countdown(cb) {
   el.hidden = false;
   steps.forEach((s, i) => setTimeout(() => {
     num.textContent = s; num.style.animation = "none"; void num.offsetWidth; num.style.animation = "";
-    beep(s === "GO" ? 1320 : 660, s === "GO" ? .3 : .12); buzz(s === "GO" ? 120 : 30);
+    snd(s === "GO" ? "go" : "count"); buzz(s === "GO" ? 120 : 30);
   }, i * 750));
   setTimeout(() => { el.hidden = true; cb(); }, steps.length * 750 - 150);
 }
@@ -936,7 +994,7 @@ function renderTod() {
     $("tod").classList.toggle("done", done);
     $("tod").innerHTML = `<small>Trick of the day</small><b>${esc(t.name)}</b><div class="meta">Level ${t.lvl} · ${tierOf(t.lvl).name}</div>
       <button id="todLaced" aria-pressed="${done}">${icon("check")}${done ? "Laced it · done today" : "Laced it"}</button>`;
-    $("todLaced").onclick = () => { store.set("todDone", done ? 0 : seed); draw(); };
+    $("todLaced").onclick = () => { store.set("todDone", done ? 0 : seed); if (!done) snd("totd"); draw(); };
   };
   draw();
 }
@@ -965,7 +1023,7 @@ $("modalX").onclick = closeHelp;
 $("modal").onclick = e => { if (e.target === $("modal")) closeHelp(); };
 document.addEventListener("click", e => { const h = e.target.closest("[data-help]"); if (h) { e.stopPropagation(); e.preventDefault(); showHelp(h.dataset.help); } }, true);
 
-const VIEWS = ["home", "play", "setup", "players", "kengame", "laddergame", "racegame", "tricks"];
+const VIEWS = ["home", "play", "setup", "players", "kengame", "laddergame", "racegame", "tricks", "sound"];
 let currentView = "home", navStack = [];
 function go(view) { navStack.push(currentView); show(view); }
 function goBack() {
@@ -1055,6 +1113,7 @@ function viewInfo(v) {
   if (v === "laddergame") return [L ? MODES[L.mode].name : "", L ? L.mode : null];
   if (v === "racegame") return ["Race to Lace", "race"];
   if (v === "tricks") return ["Trick list", null];
+  if (v === "sound") return ["Sound", null];
   return ["", null];
 }
 function show(view) {
@@ -1069,6 +1128,7 @@ function show(view) {
   if (view === "play") renderLevels();
   if (view === "setup") renderSetup();
   if (view === "players") renderPlayers();
+  if (view === "sound") renderSound();
   window.scrollTo(0, 0);
   webSync();
   syncWakeLock();
@@ -1105,7 +1165,7 @@ function showWin(o) {
     <div class="wbtns"><button class="btn btn-primary" data-w="p">${esc(o.primary[0])}</button><button class="btn btn-soft" data-w="s">${esc(o.secondary[0])}</button></div>`;
   winActions = { p: o.primary[1], s: o.secondary[1] };
   el.hidden = false;
-  [523, 659, 784, 1047].forEach((f, i) => beep(f, i === 3 ? .45 : .16, i * .14));
+  snd("victory");
   buzz(200);
   webSync();
 }
@@ -1203,7 +1263,8 @@ function finishDare(ok) {
     state.stats.done++; state.stats.streak++; state.stats.best = Math.max(state.stats.best, state.stats.streak);
     current.tricks.forEach(t => state.counts[t.key] = (state.counts[t.key] || 0) + 1);
     toast(state.stats.streak > 1 ? `Laced, ${state.stats.streak} in a row` : "Laced");
-  } else state.stats.streak = 0;
+    snd(state.stats.streak >= 5 && state.stats.streak % 5 === 0 ? "streak" : "laced");
+  } else { state.stats.streak = 0; snd("skip"); }
   save(); renderStats(); newDare();
 }
 $("darePicker").onclick = e => { const n = pickerToggle(e, state.levels); if (n) { state.levels = n; save(); renderLevels(); } };
@@ -1358,6 +1419,7 @@ function giveLetter(i) {
   p.letters++; p.lc.push(G.players[G.setter].color);   // letter krijgt de kleur van de setter
   G.anim = { p: i, l: p.letters - 1 };
   if (p.letters >= 3) p.out = true;
+  snd(p.out ? "kenout" : "letter");
 }
 function newSetRound(setter) { G.setter = setter; G.cur = setter; G.phase = "set"; G.queue = []; G.proves = []; G.trick = kenTrick(); }
 function checkWinner() { const a = alive(); if (a.length <= 1) { G.phase = "over"; G.winner = a[0] ?? null; return true; } return false; }
@@ -1514,7 +1576,10 @@ function ladderAction(a, pi) {
     if (a === "skip") p.skipped.push(p.pos);
     p.pos++;
     p.best = Math.max(p.best, landedCount(p));
-    if (p.pos >= n) { p.done = true; p.time = now - L.t0; beep(1200, .25); } else beep(990, .05);
+    if (p.pos >= n) { p.done = true; p.time = now - L.t0; snd("streak"); }
+    else if (a === "skip") snd("skip");
+    else if (L.surv && L.hard && L.cp && p.pos % L.cp === 0) snd("checkpoint");
+    else snd("laced");
     buzz(25);
   } else if (a === "miss") {
     p.misses++;
@@ -1523,7 +1588,8 @@ function ladderAction(a, pi) {
       const back = L.cp ? Math.floor(p.pos / L.cp) * L.cp : 0;
       if (back < p.pos) { p.pos = back; p.skipped = p.skipped.filter(i => i < back); p.restarts++; toast(back ? `Back to checkpoint (trick ${back + 1})` : "Back to the start"); }
     }
-    beep(220, .15); buzz(80);
+    if (L.surv) snd(p.out ? "outlives" : "life"); else snd("missed");
+    buzz(80);
   }
   if (L.style === "turns" && ended(p)) { L.phase = "between"; liveT0 = null; }
   let finished = false;
@@ -1652,7 +1718,7 @@ function raceAction(a, pi) {
   liveT0 = null;
   if (a === "win") {
     const p = R.players[pi]; p.score++; R.last = { name: p.name, color: p.color, time };
-    beep(1200, .25); buzz(60);
+    snd("point"); buzz(60);
     if (p.score >= R.target) {
       R.phase = "over"; R.winner = pi; renderRace();
       const others = R.players.map(q => q.score).sort((a, b) => b - a).join(" – ");
@@ -1831,6 +1897,19 @@ function reportCombo() {
   toast("Thanks, reported as impossible. Here's a new combo");
   newDare("combo");
 }
+$("soundLink").onclick = () => go("sound");
+function renderSound() {
+  const on = state.sound.on;
+  $("sound").innerHTML = `<div class="card" style="margin-top:4px"><button class="setting" data-snd="on"><span><b>Sound</b><small>All sounds on or off</small></span><span class="switch ${on ? "on" : ""}"></span></button></div>
+    <div class="label">Categories</div>
+    <div class="card" style="${on ? "" : "opacity:.5"}">${SOUND_CATS.map(([k, t, sub]) => `<button class="setting" data-snd="${k}"><span><b>${t}</b><small>${sub}</small></span><span class="switch ${state.sound[k] ? "on" : ""}"></span></button>`).join("")}</div>
+    <p class="hint">Tapping a switch on plays a sample of that sound.</p>`;
+}
+$("sound").onclick = e => {
+  const b = e.target.closest("[data-snd]"); if (!b) return;
+  const k = b.dataset.snd; state.sound[k] = !state.sound[k]; save(); renderSound();
+  if (state.sound[k]) snd({ on: "laced", timers: "go", results: "laced", survival: "checkpoint", ken: "letter", race: "point", victory: "victory", totd: "totd" }[k], true);
+};
 $("reqLink").onclick = () => { go("tricks"); setTimeout(() => $("reqName").focus(), 50); };
 window.addEventListener("online", flushRequests);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) flushRequests(); });
