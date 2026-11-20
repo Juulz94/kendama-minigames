@@ -851,7 +851,7 @@ const MENU = [
 ];
 const HELP = {
   dare: { name: "Dare", rules: [
-    "Pick one or more levels (KWC scale 1–12) and the type of dare.",
+    "Pick one or more levels (KWC scale 1–15) and the type of dare.",
     "Tap New dare: you get a random trick, sometimes with an extra challenge.",
     "Laced adds to your streak, Skip resets it to 0.",
     "Tutorial searches YouTube for the trick."] },
@@ -1785,8 +1785,8 @@ function renderReqPending() {
 $("reqLvl").innerHTML = LEVELS.map(l => `<option value="${l}">Lvl ${l}</option>`).join("");
 $("reqInsta").value = store.get("reqInsta", "");
 $("srcHint").textContent = window.ONLY_KWC
-  ? "Source: the official Kendama World Cup trick lists. Levels 1–3 from all KWC years (2015–2019, 2021–2023), level 4 and up only from KWC 2018 and later. The level comes from the most recent KWC list the trick appears in. Other competitions will follow later."
-  : "Sources: official trick lists of the Kendama World Cup (2015–2019, 2021–2023), North American Kendama Open 2022, European Kendama Open (2013, 2016), British Kendama Open (2014, 2015), Battle at the Beach 2025, Kendama Kentei, the Japan Kendama Association (Skill Level Challenge and Aerial), Toyskills, Sweets Kendamas \"First 50\" and the SkillAddicts trick ladder. The level comes from the most recent KWC list the trick appears in; other tricks are mapped to a comparable KWC level.";
+  ? "Source: the official Kendama World Cup trick lists. Levels 1–3 from all KWC years (2015–2019, 2021–2026), level 4 and up only from KWC 2018 and later. The level comes from the most recent KWC list the trick appears in. Other competitions will follow later."
+  : "Sources: official trick lists of the Kendama World Cup (2015–2019, 2021–2026), North American Kendama Open 2022, European Kendama Open (2013, 2016), British Kendama Open (2014, 2015), Battle at the Beach 2025, Kendama Kentei, the Japan Kendama Association (Skill Level Challenge and Aerial), Toyskills, Sweets Kendamas \"First 50\" and the SkillAddicts trick ladder. The level comes from the most recent KWC list the trick appears in; other tricks are mapped to a comparable KWC level.";
 // Bescherming tegen per ongeluk dubbel versturen en tegen spam (per toestel): even wachten tussen aanvragen en een maximum per dag
 const REQ_GAP_MS = 10000, REQ_PER_DAY = 10;
 let reqBusy = false;
