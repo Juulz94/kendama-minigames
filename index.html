@@ -239,6 +239,8 @@
   .trow .nm small { display: block; font-size: 11px; color: var(--muted); }
   .trow .c { font-size: 12px; color: var(--ok); font-weight: 800; }
   .trow.off .nm { color: #b9a68d; text-decoration: line-through; }
+  .suggest { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+  .suggest b { color: var(--text); font-weight: 700; }
   .trow a.vid { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; color: var(--wood, #8a5a2b); background: var(--surface2); }
   .trow a.vid svg.i { width: 16px; height: 16px; }
   .trow button { border: none; background: none; color: var(--muted); padding: 4px; }
@@ -1136,6 +1138,18 @@ function renderStats() { $("sDone").textContent = state.stats.done; $("sStreak")
 const comboStartOnly = t => !!(window.COMBO_START_ONLY && window.COMBO_START_ONLY.test(t.name));
 const comboBlocked = (a, b) => (window.COMBO_BLOCKED || []).some(([x, y]) => norm(a.name) === norm(x) && norm(b.name) === norm(y));
 const comboOrderOk = ts => ts.every((t, i) => !i || (!comboStartOnly(t) && !comboBlocked(ts[i - 1], t)));
+// Suggestie voor meer uitdaging bij een losse trick: een korte trick die logisch erachter past
+function comboSuggestion(t) {
+  const simple = x => !x.name.includes(",") && !x.name.includes("→") && x.name.length <= 32;
+  const nm = norm(t.name);
+  const ok = x => x.key !== t.key && active(x) && simple(x) && !comboStartOnly(x) && !comboBlocked(t, x) && !nm.includes(norm(x.name)) && x.lvl <= Math.max(2, t.lvl);
+  const all = allTricks();
+  for (const spread of [3, 6, 15]) {            // eerst dicht bij het niveau van de trick, anders breder
+    const c = all.filter(x => ok(x) && x.lvl >= Math.max(1, t.lvl - spread));
+    if (c.length) return pick(c);
+  }
+  return null;
+}
 function newDare(forceKind) {
   const lv = state.levels, pool = poolFor(lv);
   if (!pool.length) { toast("No tricks in your selection"); return; }
@@ -1164,9 +1178,10 @@ function newDare(forceKind) {
     if (current && pool.length > 1) while (t.key === current.tricks[0].key) t = pick(pool);
     tricks = [t];
   }
+  const suggest = kind === "single" ? comboSuggestion(tricks[0]) : null;
   let mod = null;
   if (state.modes.mods && Math.random() < 0.5) mod = pick(MODIFIERS.filter(m => m[0] <= maxLvl))[1];
-  current = { tricks, mod, kind, lvl: Math.max(...tricks.map(t => t.lvl)) };
+  current = { tricks, mod, kind, suggest, lvl: Math.max(...tricks.map(t => t.lvl)) };
   renderDare();
   $("yes").disabled = $("no").disabled = false;
 }
@@ -1178,6 +1193,7 @@ function renderDare() {
     <div class="ttl ${kind === "combo" ? "" : long(one.name)}">${title}</div>${desc ? `<p class="desc">${esc(desc)}</p>` : ""}
     ${kind === "combo" ? "" : `<div class="tags">${srcLabel(one.src).map(s => `<span class="pill">${esc(s)}</span>`).join("")}</div>`}
     ${mod ? `<div class="note"><small>Extra challenge</small>${esc(mod)}</div>` : ""}
+    ${kind === "single" && current.suggest ? `<p class="suggest">Want more challenge? Try it in a combo with <b>${esc(current.suggest.name)}</b>.</p>` : ""}
     <div class="links">${kind === "combo" ? `<button class="btn btn-text" data-reroll>${icon("shuffle")}Re-roll combo</button><button class="btn btn-text" data-report aria-label="Report this combo as impossible">${icon("flag")}Impossible?</button>` : ""}${tricks.map(t => `<a class="link" href="${ytLink(t.name)}" target="_blank" rel="noopener">${icon("ext")}Tutorial${kind === "combo" ? ": " + esc(t.name) : ""}</a>`).join("")}${kind === "combo" ? "" : (v => v ? `<a class="link" href="${v.url}" target="_blank" rel="noopener">${icon("play")}Official video (${v.label})</a>` : "")(kwcVideo(one))}</div>`;
 }
 function finishDare(ok) {
