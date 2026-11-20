@@ -56,6 +56,8 @@
   .label { font-size: 13px; font-weight: 700; color: var(--muted); margin: 18px 4px 8px; }
   .card { background: var(--surface); border-radius: var(--r2); box-shadow: var(--shadow); }
   .pad { padding: 16px; }
+  .about-text p { margin: 0 0 12px; font-size: 13px; line-height: 1.5; }
+  .update { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 60; border: none; font: inherit; font-weight: 700; font-size: 14px; background: #2a2119; color: #fff; padding: 12px 18px; border-radius: 99px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
   .hint { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 8px 4px 0; }
   .muted { color: var(--muted); }
   .serif { font-family: var(--serif); }
@@ -471,7 +473,7 @@
     <span style="flex:1"><b class="serif" style="font-size:16px;display:block">Missing a trick?</b><span class="muted" style="font-size:13px">Request it and we'll see if it can be added.</span></span>
     <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
   <button class="card pad" id="soundLink" style="width:100%;margin-top:10px;border:none;text-align:left;display:flex;align-items:center;gap:12px">
-    <span style="flex:1"><b class="serif" style="font-size:16px;display:block">Sound</b><span class="muted" style="font-size:13px">Beeps and chimes during the games.</span></span>
+    <span style="flex:1"><b class="serif" style="font-size:16px;display:block">Settings</b><span class="muted" style="font-size:13px">Sound, vibration, privacy and about.</span></span>
     <svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
   <div class="about"><div class="fbrow"><a class="link" id="feedbackLinkHome" href="#" target="_blank" rel="noopener">Send feedback</a><span class="ver" id="appVersionHome"></span></div></div>
 </section>
@@ -739,7 +741,7 @@ const SOUND_CATS = [
   ["victory", "Winner screen", "When a game is won or finished"],
   ["totd", "Trick of the Day", "When you lace it today"],
 ];
-state.sound = { on: true, ...Object.fromEntries(SOUND_CATS.map(c => [c[0], true])), ...state.sound };
+state.sound = { on: true, vib: true, ...Object.fromEntries(SOUND_CATS.map(c => [c[0], true])), ...state.sound };
 for (const m in CFG_DEFAULT) state.cfg[m] = { ...CFG_DEFAULT[m], ...(state.cfg[m] || {}) };
 // Alleen de naam van speler 1 blijft bewaard; de rest begint weer als Player 2, Player 3 …
 state.players.forEach((p, i) => { if (i > 0) p.name = ""; });
@@ -862,7 +864,7 @@ function timerSound(prevMs, nowMs) {
   if (p === n) return;
   if (n === 60 || n === 30) snd("chime"); else if (n === 10) snd("ten"); else if (n >= 1 && n <= 3) snd("tick"); else if (n === 0) snd("end");
 }
-const buzz = ms => { try { navigator.userActivation && navigator.userActivation.hasBeenActive && navigator.vibrate && navigator.vibrate(ms); } catch {} };
+const buzz = ms => { try { if (state.sound.vib === false) return; navigator.userActivation && navigator.userActivation.hasBeenActive && navigator.vibrate && navigator.vibrate(ms); } catch {} };
 function countdown(cb) {
   const el = $("cd"), num = $("cdNum"), steps = ["3", "2", "1", "GO"];
   el.hidden = false;
@@ -1113,7 +1115,7 @@ function viewInfo(v) {
   if (v === "laddergame") return [L ? MODES[L.mode].name : "", L ? L.mode : null];
   if (v === "racegame") return ["Race to Lace", "race"];
   if (v === "tricks") return ["Trick list", null];
-  if (v === "sound") return ["Sound", null];
+  if (v === "sound") return ["Settings", null];
   return ["", null];
 }
 function show(view) {
@@ -1898,16 +1900,33 @@ function reportCombo() {
   newDare("combo");
 }
 $("soundLink").onclick = () => go("sound");
+let resetArmed = false;
 function renderSound() {
-  const on = state.sound.on;
-  $("sound").innerHTML = `<div class="card" style="margin-top:4px"><button class="setting" data-snd="on"><span><b>Sound</b><small>All sounds on or off</small></span><span class="switch ${on ? "on" : ""}"></span></button></div>
-    <div class="label">Categories</div>
-    <div class="card" style="${on ? "" : "opacity:.5"}">${SOUND_CATS.map(([k, t, sub]) => `<button class="setting" data-snd="${k}"><span><b>${t}</b><small>${sub}</small></span><span class="switch ${state.sound[k] ? "on" : ""}"></span></button>`).join("")}</div>
-    <p class="hint">Tapping a switch on plays a sample of that sound.</p>`;
+  const on = state.sound.on, sw = v => `<span class="switch ${v ? "on" : ""}"></span>`;
+  $("sound").innerHTML = `<div class="label" style="margin-top:4px">Sound</div>
+    <div class="card"><button class="setting" data-snd="on"><span><b>Sound</b><small>All sounds on or off</small></span>${sw(on)}</button></div>
+    <div class="card" style="margin-top:10px;${on ? "" : "opacity:.5"}">${SOUND_CATS.map(([k, t, sub]) => `<button class="setting" data-snd="${k}"><span><b>${t}</b><small>${sub}</small></span>${sw(state.sound[k])}</button>`).join("")}</div>
+    <p class="hint">Tapping a switch on plays a sample of that sound.</p>
+    <div class="label">Vibration</div>
+    <div class="card"><button class="setting" data-snd="vib"><span><b>Vibration</b><small>A short buzz on taps in the games (phones that support it)</small></span>${sw(state.sound.vib !== false)}</button></div>
+    <div class="label">Data</div>
+    <div class="card"><button class="setting" data-reset><span><b>${resetArmed ? "Tap again to erase everything" : "Reset app data"}</b><small>Removes your names, levels, disabled tricks, stats and settings from this device</small></span></button></div>
+    <div class="label">About</div>
+    <div class="card pad about-text">
+      <p><b>Kendama Minigames</b> is an unofficial fan project. It is not affiliated with or endorsed by the Kendama World Cup or GLOKEN. The trick names and levels come from the official Kendama World Cup trick lists, and the video links go to the official KWC videos on the GLOKEN YouTube channel. Thanks to everyone behind them.</p>
+      <p><b>Privacy.</b> There are no accounts and no tracking. Your names, levels, disabled tricks, dare stats and settings are saved only on this device. The only things that leave your device are what you choose to send: a feedback message, a trick request or a combo report (through a Google Form), and only the name or Instagram handle you type yourself. Tutorial and video links open in YouTube.</p>
+      <p class="muted" style="margin-bottom:0">Version ${esc(APP_VERSION)}${FEEDBACK_FORM_URL ? ` · <a class="link" href="${FEEDBACK_FORM_URL}" target="_blank" rel="noopener">Send feedback</a>` : ""}</p>
+    </div>`;
 }
 $("sound").onclick = e => {
+  if (e.target.closest("[data-reset]")) {
+    if (!resetArmed) { resetArmed = true; renderSound(); setTimeout(() => { resetArmed = false; if (currentView === "sound") renderSound(); }, 4000); return; }
+    try { Object.keys(localStorage).filter(k => k.startsWith("kd2_")).forEach(k => localStorage.removeItem(k)); } catch {}
+    location.reload(); return;
+  }
   const b = e.target.closest("[data-snd]"); if (!b) return;
-  const k = b.dataset.snd; state.sound[k] = !state.sound[k]; save(); renderSound();
+  const k = b.dataset.snd; state.sound[k] = k === "vib" ? state.sound.vib === false : !state.sound[k]; save(); renderSound();
+  if (k === "vib") { if (state.sound.vib) buzz(60); return; }
   if (state.sound[k]) snd({ on: "laced", timers: "go", results: "laced", survival: "checkpoint", ken: "letter", race: "point", victory: "victory", totd: "totd" }[k], true);
 };
 $("reqLink").onclick = () => { go("tricks"); setTimeout(() => $("reqName").focus(), 50); };
@@ -1915,6 +1934,25 @@ window.addEventListener("online", flushRequests);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) flushRequests(); });
 setInterval(() => { if (pendingReqs().length) flushRequests(); }, 120000);
 flushRequests();
+
+// Nieuwe versie beschikbaar? Vergelijk (op het moment dat je terugkomt in de app) de bestanden op de server met wat nu draait.
+const fileHash = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return h + ":" + t.length; };
+let loadedHash = null, lastUpdCheck = 0;
+async function updateCheck() {
+  if (!/^https?:$/.test(location.protocol) || !navigator.onLine || Date.now() - lastUpdCheck < 600000) return;
+  lastUpdCheck = Date.now();
+  try {
+    const txt = (await Promise.all(["index.html", "tricks.js"].map(f => fetch(f, { cache: "no-cache" }).then(r => r.ok ? r.text() : Promise.reject())))).join("");
+    const h = fileHash(txt);
+    if (loadedHash === null) { loadedHash = h; return; }
+    if (h !== loadedHash && !$("upd")) {
+      const b = document.createElement("button"); b.id = "upd"; b.className = "update"; b.textContent = "Update available · tap to refresh";
+      b.onclick = () => location.reload(); document.body.appendChild(b);
+    }
+  } catch {}
+}
+window.addEventListener("load", () => setTimeout(updateCheck, 3000));
+document.addEventListener("visibilitychange", () => { if (!document.hidden) updateCheck(); });
 
 // Feedback-link en versienummer (onderaan de Trick list)
 for (const id of ["", "Home"]) {   // dezelfde link onderaan het hoofdmenu en onderaan de Trick list
