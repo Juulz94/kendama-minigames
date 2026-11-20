@@ -561,7 +561,7 @@
 //  APP_VERSION: verhoog dit bij elke nieuwe upload (en zet dezelfde waarde in sw.js bij VERSION).
 // =====================================================================
 const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5VzprFm14dYYpHh8EtgFnjXM-63b0YXoiBh4UdoVAZAF16w/viewform";
-const APP_VERSION = "v0.1.8-test";
+const APP_VERSION = "v0.1.9-test";
 
 // =====================================================================
 //  Houttexturen (SVG-ruis in de lengterichting = nerf), als CSS-variabelen
@@ -1122,6 +1122,10 @@ function renderModes() {
   $("modes").innerHTML = M.map(([k, t, s]) => `<button class="setting" data-m="${k}"><span><b>${t}</b><small>${s}</small></span><span class="switch ${state.modes[k] ? "on" : ""}"></span></button>`).join("");
 }
 function renderStats() { $("sDone").textContent = state.stats.done; $("sStreak").textContent = state.stats.streak; $("sBest").textContent = state.stats.best; }
+// Combo-regels uit tricks.js (COMBO_START_ONLY, COMBO_BLOCKED)
+const comboStartOnly = t => !!(window.COMBO_START_ONLY && window.COMBO_START_ONLY.test(t.name));
+const comboBlocked = (a, b) => (window.COMBO_BLOCKED || []).some(([x, y]) => norm(a.name) === norm(x) && norm(b.name) === norm(y));
+const comboOrderOk = ts => ts.every((t, i) => !i || (!comboStartOnly(t) && !comboBlocked(ts[i - 1], t)));
 function newDare(forceKind) {
   const lv = state.levels, pool = poolFor(lv);
   if (!pool.length) { toast("No tricks in your selection"); return; }
@@ -1135,10 +1139,16 @@ function newDare(forceKind) {
     const first = pool.filter(simple), rest = allTricks().filter(t => t.lvl <= maxLvl && active(t) && simple(t));
     if (!first.length || rest.length < 2) { toast("Not enough single tricks for a combo"); return; }
     const n = 2 + Math.floor(Math.random() * (maxLvl >= 5 ? 3 : 2));
-    tricks = [pick(first)];
-    let guard = 0;
-    while (tricks.length < n && guard++ < 50) { const t = pick(rest); if (!tricks.some(x => x.key === t.key)) tricks.push(t); }
-    tricks = shuffle(tricks);
+    // Combo-regels: een hanging-trick staat alleen vooraan; geblokkeerde paren komen niet direct na elkaar
+    for (let attempt = 0; attempt < 80; attempt++) {
+      let cand = [pick(first)], guard = 0;
+      while (cand.length < n && guard++ < 50) { const t = pick(rest); if (!cand.some(x => x.key === t.key)) cand.push(t); }
+      cand = shuffle(cand);
+      const lead = cand.findIndex(comboStartOnly);
+      if (lead > 0) cand.unshift(cand.splice(lead, 1)[0]);
+      if (comboOrderOk(cand) || attempt === 79) { tricks = comboOrderOk(cand) ? cand : null; if (tricks) break; }
+    }
+    if (!tricks) { toast("Couldn't make a combo, try again"); return; }
   } else {
     let t = pick(pool);
     if (current && pool.length > 1) while (t.key === current.tricks[0].key) t = pick(pool);

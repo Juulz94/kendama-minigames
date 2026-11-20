@@ -288,6 +288,15 @@ window.TRICK_EXCLUDE = [
   "Kenflip lighthouse", "Turntable, Reverse turntable",
 ];
 
+// Combo-regels (Dare, combo): zie het document "Kendama Minigames – impossible combos".
+// Een hanging-trick kan nooit na een andere trick komen: hij staat in een combo altijd vooraan.
+window.COMBO_START_ONLY = /\bhanging\b/i;
+// Onmogelijke paren (eerste trick, dan tweede trick)
+window.COMBO_BLOCKED = [
+  ["Base cup", "Hanging spike"],
+  ["Base cup", "Hanging lighthouse"],
+];
+
 // Schrijfwijzen gelijktrekken naar de KWC-standaard (toegepast op alle bronnen)
 window.TRICK_RENAMES = [
   [/\bScrambled\b/g, "Scramble"],
