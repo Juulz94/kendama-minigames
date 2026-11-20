@@ -289,8 +289,8 @@ window.TRICK_EXCLUDE = [
 ];
 
 // Combo-regels (Dare, combo): zie het document "Kendama Minigames – impossible combos".
-// Een hanging-trick kan nooit na een andere trick komen: hij staat in een combo altijd vooraan.
-window.COMBO_START_ONLY = /\bhanging\b/i;
+// Een trick die met "Hanging" begint kan nooit na een andere trick komen: hij staat in een combo altijd vooraan.
+window.COMBO_START_ONLY = /^hanging\b/i;   // alleen namen die met Hanging beginnen; "Pirouette hanging spike" is een eigen trick en mag overal staan
 // Onmogelijke paren (eerste trick, dan tweede trick)
 window.COMBO_BLOCKED = [
   ["Base cup", "Hanging spike"],
