@@ -561,7 +561,7 @@
 //  APP_VERSION: verhoog dit bij elke nieuwe upload (en zet dezelfde waarde in sw.js bij VERSION).
 // =====================================================================
 const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5VzprFm14dYYpHh8EtgFnjXM-63b0YXoiBh4UdoVAZAF16w/viewform";
-const APP_VERSION = "v0.1.7-test";
+const APP_VERSION = "v0.1.8-test";
 
 // =====================================================================
 //  Houttexturen (SVG-ruis in de lengterichting = nerf), als CSS-variabelen
@@ -749,6 +749,7 @@ const initial = name => (name.trim()[0] || "?").toUpperCase();
 // ---------- Iconen ----------
 // Lijn-iconen voor de interface
 const I = {
+  flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   shuffle: '<path d="M16 4h4v4M4 20L20 4M20 16v4h-4M15 15l5 5M4 4l5 5"/>',
   play: '<path d="M7 5l12 7-12 7z" fill="currentColor" stroke="none"/>',
@@ -1157,7 +1158,7 @@ function renderDare() {
     <div class="ttl ${kind === "combo" ? "" : long(one.name)}">${title}</div>${desc ? `<p class="desc">${esc(desc)}</p>` : ""}
     ${kind === "combo" ? "" : `<div class="tags">${srcLabel(one.src).map(s => `<span class="pill">${esc(s)}</span>`).join("")}</div>`}
     ${mod ? `<div class="note"><small>Extra challenge</small>${esc(mod)}</div>` : ""}
-    <div class="links">${kind === "combo" ? `<button class="btn btn-text" data-reroll>${icon("shuffle")}Re-roll combo</button>` : ""}${tricks.map(t => `<a class="link" href="${ytLink(t.name)}" target="_blank" rel="noopener">${icon("ext")}Tutorial${kind === "combo" ? ": " + esc(t.name) : ""}</a>`).join("")}${kind === "combo" ? "" : (v => v ? `<a class="link" href="${v.url}" target="_blank" rel="noopener">${icon("play")}Official video (${v.label})</a>` : "")(kwcVideo(one))}</div>`;
+    <div class="links">${kind === "combo" ? `<button class="btn btn-text" data-reroll>${icon("shuffle")}Re-roll combo</button><button class="btn btn-text" data-report aria-label="Report this combo as impossible">${icon("flag")}Impossible?</button>` : ""}${tricks.map(t => `<a class="link" href="${ytLink(t.name)}" target="_blank" rel="noopener">${icon("ext")}Tutorial${kind === "combo" ? ": " + esc(t.name) : ""}</a>`).join("")}${kind === "combo" ? "" : (v => v ? `<a class="link" href="${v.url}" target="_blank" rel="noopener">${icon("play")}Official video (${v.label})</a>` : "")(kwcVideo(one))}</div>`;
 }
 function finishDare(ok) {
   if (!current) return;
@@ -1177,7 +1178,10 @@ $("modes").onclick = e => {
 };
 $("dareGo").onclick = () => newDare();
 // Re-roll van een combo: nieuwe combo, telt niet als Skip (streak blijft staan)
-$("dare").addEventListener("click", e => { if (e.target.closest("[data-reroll]")) newDare("combo"); });
+$("dare").addEventListener("click", e => {
+  if (e.target.closest("[data-reroll]")) newDare("combo");
+  else if (e.target.closest("[data-report]")) reportCombo();
+});
 $("yes").onclick = () => finishDare(true);
 $("no").onclick = () => finishDare(false);
 
@@ -1719,7 +1723,7 @@ const pendingReqs = () => store.get("reqQueue", []);
 async function sendRequest(r) {
   if (!formReady()) return false;
   try {
-    const data = { [REQUEST_FORM.nameField]: r.name, [REQUEST_FORM.levelField]: `${r.lvl} (${tierOf(r.lvl).name})` };
+    const data = { [REQUEST_FORM.nameField]: (r.report ? "[REPORT: impossible combo] " : "") + r.name, [REQUEST_FORM.levelField]: `${r.lvl} (${tierOf(r.lvl).name})` };
     if (r.insta) data[REQUEST_FORM.instaField] = r.insta;
     return await postForm(data);
   } catch { return false; }
@@ -1773,6 +1777,23 @@ $("reqForm").onsubmit = async e => {
   toast(ok ? "Thanks! Your request has been sent" : "No connection. Saved, it will be sent automatically when you're back online");
   renderReqPending();
 };
+// Vlaggetje op een combo: meld dat de combo onmogelijk is (zelfde formulier, zelfde offline-wachtrij), daarna meteen een nieuwe combo
+const REP_GAP_MS = 3000, REP_PER_DAY = 30;
+function reportCombo() {
+  const c = current;
+  if (!c || c.kind !== "combo") return;
+  const name = c.tricks.map(t => t.name).join(" → "), key = norm(name), done = store.get("reported", []);
+  if (done.includes(key)) { toast("You already reported this combo"); newDare("combo"); return; }
+  const now = Date.now(), log = store.get("repLog", []).filter(t => now - t < 864e5);
+  if (log.length && now - log[log.length - 1] < REP_GAP_MS) { toast("One moment, then report again"); return; }
+  if (log.length >= REP_PER_DAY) { toast("That's enough reports for today. Thank you!"); return; }
+  const r = { name, lvl: c.lvl, at: now, report: true };
+  store.set("reported", [...done, key].slice(-300));
+  store.set("repLog", [...log, now]);
+  sendRequest(r).then(ok => { if (!ok) { store.set("reqQueue", [...pendingReqs(), r]); renderReqPending(); } });
+  toast("Thanks, reported as impossible. Here's a new combo");
+  newDare("combo");
+}
 $("reqLink").onclick = () => { go("tricks"); setTimeout(() => $("reqName").focus(), 50); };
 window.addEventListener("online", flushRequests);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) flushRequests(); });
