@@ -482,10 +482,10 @@
   <div class="card pad" id="dare" style="margin-top:16px"><div class="empty">Pick your level and tap <b>New dare</b>.</div></div>
   <div class="stack">
     <button class="btn btn-primary" id="dareGo">New dare</button>
-    <div class="row2"><button class="btn btn-ok" id="yes" disabled>Landed</button><button class="btn btn-soft" id="no" disabled>Skip</button></div>
+    <div class="row2"><button class="btn btn-ok" id="yes" disabled>Laced</button><button class="btn btn-soft" id="no" disabled>Skip</button></div>
   </div>
   <div class="card stats" style="margin-top:16px">
-    <div><b id="sDone">0</b><span>Landed</span></div>
+    <div><b id="sDone">0</b><span>Laced</span></div>
     <div><b id="sStreak">0</b><span>Current streak</span></div>
     <div><b id="sBest">0</b><span>Best streak</span></div>
   </div>
@@ -853,7 +853,7 @@ const HELP = {
   dare: { name: "Dare", rules: [
     "Pick one or more levels (KWC scale 1–12) and the type of dare.",
     "Tap New dare: you get a random trick, sometimes with an extra challenge.",
-    "Landed adds to your streak, Skip resets it to 0.",
+    "Laced adds to your streak, Skip resets it to 0.",
     "Tutorial searches YouTube for the trick."] },
   ken: { name: "Game of KEN", rules: [
     "Players take turns being the setter. The setter sets one trick (with Random tricks on, the app picks it).",
@@ -1118,13 +1118,14 @@ const toMenu = () => { navStack = []; liveT0 = null; show("home"); };
 //  Dare
 // =====================================================================
 const MODIFIERS = [
-  [1, "Land it 3 times in a row."], [1, "You get 5 attempts max."], [1, "Do it standing on one leg."],
-  [1, "Do it 5 times in a row without a miss."], [1, "Start with the tama hanging still: no swinging start."],
-  [1, "Bend your knees on every catch."], [3, "With your non-dominant hand."], [3, "Sitting on a chair."],
-  [3, "Land it within 30 seconds."], [3, "Do it 10 times: every miss resets the count to 0."],
-  [5, "Turn half a circle before you start, without stopping the tama."], [5, "Finish with an extra spike."],
-  [5, "Do 10 moshikame first, then go straight into the trick."], [7, "With your non-dominant hand, 3 times in a row."],
-  [7, "You get 3 attempts. After that it's a fail."], [9, "First try. One attempt."], [9, "Land it twice in a row without a miss."],
+  [1, "Do it standing on one leg."], [1, "Try the final catch no look."], [1, "Do it sitting on the floor."],
+  [1, "Do it in slow motion."], [1, "Do it while humming a song."], [1, "Lace it 3 times in a row."],
+  [1, "You get 5 attempts max."], [2, "Do it with your eyes on the ceiling the whole time."],
+  [3, "Switch hands: use your non-dominant hand."], [3, "Do it sitting on a chair."], [3, "Do it with your eyes closed."],
+  [3, "Do it while a friend tries to make you laugh."], [3, "Do it while counting out loud to a steady beat."],
+  [3, "Lace it, then keep a straight face: no reaction at all."], [4, "Do it while walking in place."],
+  [5, "Do it 10 times: every miss resets the count to 0."], [7, "Switch hands, 3 times in a row."],
+  [7, "You get 3 attempts. After that it's a fail."], [9, "First try. One attempt."],
 ];
 const descOf = t => window.TRICK_DESC[norm(t.name)] || (t.custom ? "Custom trick." : "");
 let current = null;
@@ -1201,7 +1202,7 @@ function finishDare(ok) {
   if (ok) {
     state.stats.done++; state.stats.streak++; state.stats.best = Math.max(state.stats.best, state.stats.streak);
     current.tricks.forEach(t => state.counts[t.key] = (state.counts[t.key] || 0) + 1);
-    toast(state.stats.streak > 1 ? `Landed, ${state.stats.streak} in a row` : "Landed");
+    toast(state.stats.streak > 1 ? `Laced, ${state.stats.streak} in a row` : "Laced");
   } else state.stats.streak = 0;
   save(); renderStats(); newDare();
 }
@@ -1562,9 +1563,9 @@ function resultsHTML() {
 const undoBtn = () => ladderUndo.length ? `<div class="center"><button class="btn btn-text" data-la="undo">Undo last tap</button></div>` : "";
 function runButtons(i) {
   const d = i != null ? ` data-p="${i}"` : "";
-  if (L.surv) return `<div class="row3"><button class="btn btn-ok" data-la="land"${d}>Landed</button><button class="btn btn-bad" data-la="miss"${d}>Missed</button>
+  if (L.surv) return `<div class="row3"><button class="btn btn-ok" data-la="land"${d}>Laced</button><button class="btn btn-bad" data-la="miss"${d}>Missed</button>
       <button class="btn btn-soft" data-la="skip"${d} aria-label="Skip trick">${icon("skip")}Skip</button></div>`;
-  return `<div class="row2"><button class="btn btn-ok" data-la="land"${d}>Landed</button><button class="btn btn-bad" data-la="miss"${d}>Missed</button></div>`;
+  return `<div class="row2"><button class="btn btn-ok" data-la="land"${d}>Laced</button><button class="btn btn-bad" data-la="miss"${d}>Missed</button></div>`;
 }
 function renderLadder() {
   const P = L.players, n = L.ladder.length, el = $("laddergame");
