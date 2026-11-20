@@ -561,7 +561,7 @@
 //  APP_VERSION: verhoog dit bij elke nieuwe upload (en zet dezelfde waarde in sw.js bij VERSION).
 // =====================================================================
 const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5VzprFm14dYYpHh8EtgFnjXM-63b0YXoiBh4UdoVAZAF16w/viewform";
-const APP_VERSION = "v0.1.11-test";
+const APP_VERSION = "v0.1.12-test";
 
 // =====================================================================
 //  Houttexturen (SVG-ruis in de lengterichting = nerf), als CSS-variabelen
@@ -660,14 +660,20 @@ const DB = (() => {
     name = name.trim().replace(/\bFalling in\b/g, "In").replace(/\bfalling in\b/g, "in");
     for (const [re, to] of window.TRICK_RENAMES || []) name = name.replace(re, to);
     if (!name || exclude.has(norm(name))) return;
+    // Zolang alleen KWC wordt gebruikt, bepalen andere lijsten niets (ook de schrijfwijze niet)
+    if (window.ONLY_KWC && !src.startsWith("KWC ")) return;
+    const yr = src.startsWith("KWC ") ? +src.slice(4) : 0;   // schrijfwijze volgt de nieuwste KWC-lijst
     const k = baseKey(name), e = map.get(k);
     if (e) {
       if (!e.src.includes(src)) e.src.push(src);
       if (!(src in e.at)) e.at[src] = lvl;
-      // Bewaar de naam mét afsluiting als er eerst een losse variant stond
-      if (!hasIn(e.name) && hasIn(name)) e.name = name;
+      // Nieuwere KWC-lijst: neem die schrijfwijze over (de afsluiting "In" blijft behouden)
+      if (yr > e.ny) {
+        const note = /\s*\(.*?\)\s*$/.test(name);
+        e.name = hasIn(e.name) && !hasIn(name) && !note ? name + ", In" : name; e.ny = yr;
+      } else if (!hasIn(e.name) && hasIn(name)) e.name = name;   // Bewaar de naam mét afsluiting als er eerst een losse variant stond
       e.variants.add(name);
-    } else map.set(k, { key: k, name, lvl, src: [src], at: { [src]: lvl }, variants: new Set([name]) });
+    } else map.set(k, { key: k, name, lvl, src: [src], at: { [src]: lvl }, ny: yr, variants: new Set([name]) });
   };
   for (const s of window.TRICK_SOURCES) {
     for (const [l, str] of Object.entries(s.levels || {})) str.split("|").forEach(n => add(n, +l, s.id));
