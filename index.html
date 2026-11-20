@@ -561,7 +561,7 @@
 //  APP_VERSION: verhoog dit bij elke nieuwe upload (en zet dezelfde waarde in sw.js bij VERSION).
 // =====================================================================
 const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5VzprFm14dYYpHh8EtgFnjXM-63b0YXoiBh4UdoVAZAF16w/viewform";
-const APP_VERSION = "v0.1.10-test";
+const APP_VERSION = "v0.1.11-test";
 
 // =====================================================================
 //  Houttexturen (SVG-ruis in de lengterichting = nerf), als CSS-variabelen
@@ -735,8 +735,14 @@ function kwcVideo(t) {
 }
 const srcLabel = src => {
   const kwc = src.filter(s => s.startsWith("KWC ")).map(s => s.slice(4)).sort((a, b) => b - a);
-  return [...(kwc.length ? ["KWC " + kwc.join(", ")] : []), ...src.filter(s => !s.startsWith("KWC "))];
+  // Zolang alleen de KWC-lijsten worden gebruikt (ONLY_KWC) noemen we andere lijsten niet
+  return [...(kwc.length ? ["KWC " + kwc.join(", ")] : []), ...(window.ONLY_KWC ? [] : src.filter(s => !s.startsWith("KWC ")))];
 };
+// Onder een trick in de tricklijst: per KWC-jaar het niveau, nieuwste eerst, bv. "KWC 2026 L7 · 2023 L5"
+function kwcLevels(t) {
+  const ys = Object.keys(t.at || {}).filter(s => s.startsWith("KWC ")).map(s => +s.slice(4)).sort((a, b) => b - a);
+  return ys.length ? "KWC " + ys.map(y => `${y} L${t.at["KWC " + y]}`).join(" · ") : srcLabel(t.src).join(" · ");
+}
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const $ = id => document.getElementById(id);
@@ -1676,7 +1682,7 @@ function renderTricks() {
     if (q && !ts.length) return "";
     return `<details data-l="${l}" ${q || open.has(String(l)) ? "open" : ""}><summary>${icon("chev", "chev")}<span class="dot" style="--c:${tierOf(l).c}"></span>Level ${l} · ${tierOf(l).name}<span class="cnt">${ts.length}</span></summary>`
       + ts.map(t => `<div class="trow ${state.disabled.includes(t.key) ? "off" : ""}" data-k="${esc(t.key)}">
-        <span class="nm">${esc(t.name)}<small>${srcLabel(t.src).join(" · ")}</small></span>
+        <span class="nm">${esc(t.name)}<small>${kwcLevels(t)}</small></span>
         <span class="c">${state.counts[t.key] ? state.counts[t.key] + "x" : ""}</span>
         ${(v => v ? `<a class="vid" href="${v.url}" target="_blank" rel="noopener" aria-label="Watch the official video (${v.label})" title="${v.label}">${icon("play")}</a>` : "")(kwcVideo(t))}
         ${t.custom ? `<button data-del="${esc(t.name)}" aria-label="Delete">${icon("x")}</button>` : ""}</div>`).join("") + "</details>";
