@@ -987,7 +987,7 @@ function gameInProgress() {
 // ---------- Scherm aan houden tijdens een spel (Screen Wake Lock API, als de browser het kan) ----------
 let wakeLock = null;
 async function syncWakeLock() {
-  const want = ["kengame", "laddergame", "racegame"].includes(currentView) && !document.hidden;
+  const want = (["kengame", "laddergame", "racegame"].includes(currentView) || (currentView === "play" && state.modes.awake !== false)) && !document.hidden;
   try {
     if (want && !wakeLock && "wakeLock" in navigator) {
       wakeLock = await navigator.wakeLock.request("screen");
@@ -1130,8 +1130,8 @@ const descOf = t => window.TRICK_DESC[norm(t.name)] || (t.custom ? "Custom trick
 let current = null;
 function renderLevels() { $("darePicker").innerHTML = pickerHTML(state.levels); }
 function renderModes() {
-  const M = [["single", "Single trick", "One trick per dare"], ["combo", "Combo", "Two to four tricks in a row"], ["mods", "Extra challenge", "Sometimes adds an extra task"]];
-  $("modes").innerHTML = M.map(([k, t, s]) => `<button class="setting" data-m="${k}"><span><b>${t}</b><small>${s}</small></span><span class="switch ${state.modes[k] ? "on" : ""}"></span></button>`).join("");
+  const M = [["single", "Single trick", "One trick per dare"], ["combo", "Combo", "Two to four tricks in a row"], ["mods", "Extra challenge", "Sometimes adds an extra task"], ["awake", "Keep screen on", "Stops the screen from turning off"]];
+  $("modes").innerHTML = M.map(([k, t, s]) => `<button class="setting" data-m="${k}"><span><b>${t}</b><small>${s}</small></span><span class="switch ${(k === "awake" ? state.modes.awake !== false : state.modes[k]) ? "on" : ""}"></span></button>`).join("");
 }
 function renderStats() { $("sDone").textContent = state.stats.done; $("sStreak").textContent = state.stats.streak; $("sBest").textContent = state.stats.best; }
 // Combo-regels uit tricks.js (COMBO_START_ONLY, COMBO_BLOCKED)
@@ -1208,9 +1208,9 @@ function finishDare(ok) {
 $("darePicker").onclick = e => { const n = pickerToggle(e, state.levels); if (n) { state.levels = n; save(); renderLevels(); } };
 $("modes").onclick = e => {
   const b = e.target.closest("[data-m]"); if (!b) return;
-  const k = b.dataset.m; state.modes[k] = !state.modes[k];
+  const k = b.dataset.m; state.modes[k] = k === "awake" ? state.modes.awake === false : !state.modes[k];
   if (!state.modes.single && !state.modes.combo) state.modes[k === "single" ? "combo" : "single"] = true;
-  save(); renderModes();
+  save(); renderModes(); syncWakeLock();
 };
 $("dareGo").onclick = () => newDare();
 // Re-roll van een combo: nieuwe combo, telt niet als Skip (streak blijft staan)
