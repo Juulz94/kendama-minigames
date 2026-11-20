@@ -1978,17 +1978,15 @@ document.addEventListener("visibilitychange", () => { if (!document.hidden) flus
 setInterval(() => { if (pendingReqs().length) flushRequests(); }, 120000);
 flushRequests();
 
-// Nieuwe versie beschikbaar? Vergelijk (op het moment dat je terugkomt in de app) de bestanden op de server met wat nu draait.
-const fileHash = t => { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return h + ":" + t.length; };
-let loadedHash = null, lastUpdCheck = 0;
+// Nieuwe versie beschikbaar? Alleen bij een hoger versienummer (APP_VERSION) verschijnt de melding; kleine wijzigingen komen vanzelf binnen.
+let lastUpdCheck = 0;
 async function updateCheck() {
   if (!/^https?:$/.test(location.protocol) || !navigator.onLine || Date.now() - lastUpdCheck < 600000) return;
   lastUpdCheck = Date.now();
   try {
-    const txt = (await Promise.all(["index.html", "tricks.js"].map(f => fetch(f, { cache: "no-cache" }).then(r => r.ok ? r.text() : Promise.reject())))).join("");
-    const h = fileHash(txt);
-    if (loadedHash === null) { loadedHash = h; return; }
-    if (h !== loadedHash && !$("upd")) {
+    const r = await fetch("index.html", { cache: "no-cache" }); if (!r.ok) return;
+    const m = (await r.text()).match(/const APP_VERSION = "([^"]+)"/);
+    if (m && m[1] !== APP_VERSION && !$("upd")) {
       const b = document.createElement("button"); b.id = "upd"; b.className = "update"; b.textContent = "Update available · tap to refresh";
       b.onclick = () => location.reload(); document.body.appendChild(b);
     }
