@@ -561,7 +561,7 @@
 //  APP_VERSION: verhoog dit bij elke nieuwe upload (en zet dezelfde waarde in sw.js bij VERSION).
 // =====================================================================
 const FEEDBACK_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSf5VzprFm14dYYpHh8EtgFnjXM-63b0YXoiBh4UdoVAZAF16w/viewform";
-const APP_VERSION = "v0.1.12-test";
+const APP_VERSION = "v0.1.13-test";
 
 // =====================================================================
 //  Houttexturen (SVG-ruis in de lengterichting = nerf), als CSS-variabelen
@@ -1124,9 +1124,7 @@ const MODIFIERS = [
   [5, "Do 10 moshikame first, then go straight into the trick."], [7, "With your non-dominant hand, 3 times in a row."],
   [7, "You get 3 attempts. After that it's a fail."], [9, "First try. One attempt."], [9, "Land it twice in a row without a miss."],
 ];
-const descOf = t => window.TRICK_DESC[norm(t.name)] ||
-  (t.custom ? "Custom trick." : t.name.includes(",") || t.name.includes("→")
-    ? "Combo: do the parts in this order without grabbing the tama in between." : "");
+const descOf = t => window.TRICK_DESC[norm(t.name)] || (t.custom ? "Custom trick." : "");
 let current = null;
 function renderLevels() { $("darePicker").innerHTML = pickerHTML(state.levels); }
 function renderModes() {
