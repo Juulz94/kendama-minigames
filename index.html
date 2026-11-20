@@ -846,7 +846,7 @@ const MENU = [
   { go: "ken", logo: "ken", c: "#2f74c9", name: "Game of KEN", sub: "Match the trick or get a letter", tags: ["2–10 players"], help: "ken" },
   { go: "speed", logo: "speed", c: "#d89a22", name: "Speed Ladder", sub: "A random ladder as fast as you can", tags: ["1–10", "Timer"], help: "speed" },
   { go: "surv", logo: "surv", c: "#e06a3a", name: "Survival", sub: "Get as far as you can with limited lives", tags: ["1–10", "Lives"], help: "surv" },
-  { go: "race", logo: "race", c: "#7d55c7", name: "Race to Lace", sub: "Who lands the trick first?", tags: ["2–10", "Points"], help: "race" },
+  { go: "race", logo: "race", c: "#7d55c7", name: "Race to Lace", sub: "Who laces the trick first?", tags: ["2–10", "Points"], help: "race" },
   { go: "tricks", logo: "tricks", c: "#3f9461", name: "Trick list", sub: "All tricks, search and glossary", tags: [`${DB.length} tricks`] },
 ];
 const HELP = {
@@ -857,28 +857,28 @@ const HELP = {
     "Tutorial searches YouTube for the trick."] },
   ken: { name: "Game of KEN", rules: [
     "Players take turns being the setter. The setter sets one trick (with Random tricks on, the app picks it).",
-    "If the setter misses, the next player becomes the setter. If the setter lands it, everyone else tries the same trick.",
+    "If the setter misses, the next player becomes the setter. If the setter laces it, everyone else tries the same trick.",
     "Miss the trick and you get a letter: first K, then E, then N. The letter takes the setter's colour.",
-    "On your last letter you can use Prove it once per game: the setter has to land the trick again after the round. If they do, you get the N; if they miss, you stay in.",
-    "If two players use Prove it on the same trick, the setter does it twice: one attempt for each player. Each attempt only decides for its own player: a landed attempt gives that player the N, a missed one saves that player.",
+    "On your last letter you can use Prove it once per game: the setter has to lace the trick again after the round. If they do, you get the N; if they miss, you stay in.",
+    "If two players use Prove it on the same trick, the setter does it twice: one attempt for each player. Each attempt only decides for its own player: a laced attempt gives that player the N, a missed one saves that player.",
     "Spell K-E-N and you're out. The last player standing wins."] },
   speed: { name: "Speed Ladder", rules: [
     "The app builds a random ladder from your chosen levels, from easy to hard.",
-    "Land the tricks in order. Miss one and you just try it again; a miss costs no extra time.",
+    "Lace the tricks in order. Miss one and you just try it again; a miss costs no extra time.",
     "Take turns: everyone does the same ladder with their own timer. The timer starts after 3-2-1 and stops on the last trick.",
     "Together: one shared timer. Everyone taps their own progress; your finish time is recorded as soon as you're done.",
     "Fastest time wins."] },
   surv: { name: "Survival", rules: [
     "The app builds a ladder of tricks that get harder and harder.",
-    "Land the tricks in order. A miss costs a life and you try the same trick again.",
-    "Skip moves you to the next trick; a skipped trick doesn't count as landed.",
+    "Lace the tricks in order. A miss costs a life and you try the same trick again.",
+    "Skip moves you to the next trick; a skipped trick doesn't count as laced.",
     "Hard mode: a miss costs a life and sends you back to the start of the ladder, or to the last checkpoint.",
-    "When you're out of lives, your run is over. Most tricks landed wins; on a tie, the fastest time."] },
+    "When you're out of lives, your run is over. Most tricks laced wins; on a tie, the fastest time."] },
   race: { name: "Race to Lace", rules: [
     "The app shows a random trick from your chosen levels.",
     "After 3-2-1 everyone starts at the same time and the timer runs.",
-    "Tap the player who lands the trick first; they get a point.",
-    "If nobody lands it, skip the trick.",
+    "Tap the player who laces the trick first; they get a point.",
+    "If nobody laces it, skip the trick.",
     "First to reach the set number of points wins."] },
 };
 // Houten schijfje: donkere rand, lichte kern, nerf (SVG-ruis) en het ingebrande logo
@@ -1269,7 +1269,7 @@ function renderSetup() {
   const poolN = poolFor(c.levels).length;
   if (c.len && poolN && poolN < c.len) h += `<p class="hint">Only ${poolN} tricks available at these levels, so the ladder will be ${poolN} tricks long.</p>`;
   if (!poolN && (!m.random || c.random)) h += `<p class="hint">No tricks available at these levels. Pick other levels or turn tricks back on in the Trick list.</p>`;
-  if (c.hard && setupMode === "surv") h += `<p class="hint">${c.cp ? `You reach a checkpoint every ${c.cp} landed tricks. A miss sends you back to the last checkpoint.` : "Without checkpoints, a miss sends you all the way back to the start."}</p>`;
+  if (c.hard && setupMode === "surv") h += `<p class="hint">${c.cp ? `You reach a checkpoint every ${c.cp} laced tricks. A miss sends you back to the last checkpoint.` : "Without checkpoints, a miss sends you all the way back to the start."}</p>`;
   h += `<div class="dock"><button class="btn btn-primary" data-continue>Continue</button></div>`;
   $("setup").innerHTML = h;
 }
@@ -1409,19 +1409,19 @@ function renderKen() {
   const btn = (cls, act, label) => `<button class="btn ${cls}" data-ka="${act}">${label}</button>`;
   let turn = "", acts = "";
   if (G.phase === "set") {
-    turn = `<div class="overline">${whoHTML(cp)}<span>sets a trick</span></div>${G.random ? trickBlock(G.trick) : '<p class="desc" style="margin-top:12px">Pick a trick yourself and try to land it.</p>'}
+    turn = `<div class="overline">${whoHTML(cp)}<span>sets a trick</span></div>${G.random ? trickBlock(G.trick) : '<p class="desc" style="margin-top:12px">Pick a trick yourself and try to lace it.</p>'}
       ${G.random && G.trick ? `<div class="links"><button class="btn btn-text" data-ka="reroll">${icon("shuffle")}Other trick</button></div>` : ""}`;
     acts = `<div class="row2">${btn("btn-ok", "set", "Trick set")}${btn("btn-bad", "miss", "Missed")}</div>`;
   } else if (G.phase === "attempt") {
     turn = `<div class="overline">${whoHTML(cp)}<span>tries ${esc(sp.name)}'s trick</span></div>${G.random ? trickBlock(G.trick) : '<p class="desc" style="margin-top:12px">Copy the setter\'s trick.</p>'}`;
     acts = `<div class="row2">${btn("btn-ok", "laced", "Laced")}${btn("btn-bad", "miss", "Missed")}</div>`;
   } else if (G.phase === "third") {
-    turn = `<div class="overline">${whoHTML(cp)}<span>last letter</span></div><p class="desc" style="margin-top:12px">Take the N, or use your Prove it: ${esc(sp.name)} must land the trick again after this round.</p>`;
+    turn = `<div class="overline">${whoHTML(cp)}<span>last letter</span></div><p class="desc" style="margin-top:12px">Take the N, or use your Prove it: ${esc(sp.name)} must lace the trick again after this round.</p>`;
     acts = `<div class="row2">${btn("btn-soft", "prove", "Prove it")}${btn("btn-bad", "accept", "Take the N")}</div>`;
   } else if (G.phase === "prove") {
     const target = P[G.proves[0]], nr = G.proveTotal - G.proves.length + 1;
     turn = `<div class="overline">${whoHTML(sp)}<span>Prove it${G.proveTotal > 1 ? ` (${nr} of ${G.proveTotal})` : ""}</span></div>${trickBlock(G.trick)}
-      <p class="desc">If ${esc(sp.name)} lands the trick, ${esc(target.name)} gets the N. If it's missed, ${esc(target.name)} stays in the game.</p>`;
+      <p class="desc">If ${esc(sp.name)} laces the trick, ${esc(target.name)} gets the N. If it's missed, ${esc(target.name)} stays in the game.</p>`;
     acts = `<div class="row2">${btn("btn-ok", "laced", "Laced")}${btn("btn-bad", "miss", "Missed")}</div>`;
   } else if (G.phase === "over") {
     const w = G.winner != null ? P[G.winner] : null;
@@ -1476,10 +1476,10 @@ function ladderWin() {
   if (!w || (!L.surv && !w.done) || (L.surv && w.best === 0 && !w.done)) return;
   const tied = solo ? [w] : r.filter(p => cmpKey(p, w) === 0);
   const stat = L.surv
-    ? `${w.best}/${n} landed${w.time != null ? ` <span style="opacity:.6">·</span> ${icon("clock")} ${fmt(w.time)}` : ""}`
+    ? `${w.best}/${n} laced${w.time != null ? ` <span style="opacity:.6">·</span> ${icon("clock")} ${fmt(w.time)}` : ""}`
     : `${icon("clock")} ${fmt(w.time)} <span style="opacity:.6">· ${n} tricks</span>`;
   showWin({ game: m.name, player: w,
-    title: solo ? (w.done ? "Ladder complete!" : `${w.best} tricks landed!`) : tied.length > 1 ? "It's a tie!" : `${w.name} wins!`,
+    title: solo ? (w.done ? "Ladder complete!" : `${w.best} tricks laced!`) : tied.length > 1 ? "It's a tie!" : `${w.name} wins!`,
     sub: solo ? w.name : tied.length > 1 ? `Shared first place: ${tied.map(p => p.name).join(" & ")}`
       : L.surv ? (w.done ? "Finished the whole ladder" : "Got furthest up the ladder") : `Fastest time of ${L.players.length} players`,
     stat, colors: L.players.map(p => p.color).concat("#f2c14e"),
@@ -1555,7 +1555,7 @@ function resultsHTML() {
   const P = ranking(), n = L.ladder.length, pl = places(P);
   return `<div class="label" style="margin-top:4px">Results</div>
     <div class="card">${P.map((p, i) => `<div class="rank ${pl[i] === 1 ? "me" : ""}"><span class="pos">${pl[i]}</span><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><b>${esc(p.name)}</b>
-      <span class="v">${L.surv ? `${p.best}/${n} landed${p.time != null ? " · " + fmt(p.time) : ""}`
+      <span class="v">${L.surv ? `${p.best}/${n} laced${p.time != null ? " · " + fmt(p.time) : ""}`
                                : p.done ? fmt(p.time) + (p.misses ? ` · ${p.misses} missed` : "") : `not finished (${p.pos}/${n})`}</span></div>`).join("")}</div>
     <div class="label">Ladder</div><div class="card" style="padding:4px 12px">${ladderListHTML(null)}</div>
     <div class="dock"><div class="row2"><button class="btn btn-soft" data-la="again">Same ladder</button><button class="btn btn-primary" data-la="new">New ladder</button></div>${undoBtn()}</div>`;
@@ -1596,8 +1596,8 @@ function renderLadder() {
         <div class="label" style="margin-top:4px">Ladder</div><div class="card" style="padding:4px 12px">${ladderListHTML(p)}</div>`;
     } else if (L.phase === "between") {
       const res = p.done
-        ? (L.surv ? `${p.best} of ${n} tricks landed in ${fmt(p.time)}.` : `Ladder complete in ${fmt(p.time)}${p.misses ? `, ${p.misses}× missed` : ""}.`)
-        : `Out of lives. ${p.best} of ${n} tricks landed.`;
+        ? (L.surv ? `${p.best} of ${n} tricks laced in ${fmt(p.time)}.` : `Ladder complete in ${fmt(p.time)}${p.misses ? `, ${p.misses}× missed` : ""}.`)
+        : `Out of lives. ${p.best} of ${n} tricks laced.`;
       const last = L.cur >= P.length - 1;
       h += `<div class="card pad" style="margin-top:12px"><div class="overline">${whoHTML(p)}</div><div class="ttl">${p.done ? "Done!" : "Run over"}</div><p class="desc">${res}</p></div>
         <div class="dock"><button class="btn btn-primary" data-la="next">${last ? "See results" : `Next: ${esc(P[L.cur + 1].name)}`}</button>${undoBtn()}</div>`;
@@ -1612,7 +1612,7 @@ function renderLadder() {
     } else {
       h += `<div class="card" style="margin-top:12px">${P.map((p, i) => {
         const t = L.ladder[p.pos];
-        const status = p.done ? `<div class="fin">Done in ${fmt(p.time)}</div>` : p.out ? `<div class="fin muted">Out of lives · ${p.best}/${n} landed</div>` : `<div class="cur">${esc(t.name)}</div>`;
+        const status = p.done ? `<div class="fin">Done in ${fmt(p.time)}</div>` : p.out ? `<div class="fin muted">Out of lives · ${p.best}/${n} laced</div>` : `<div class="cur">${esc(t.name)}</div>`;
         return `<div class="pcard ${p.out ? "out" : ""}" style="--pc:${p.color}">
           <div class="top"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><b>${esc(p.name)}</b>${livesHTML(p)}<span class="muted" style="font-weight:700">${p.pos}/${n}</span></div>
           <div class="bar"><i style="width:${p.pos / n * 100}%"></i></div>${status}${ended(p) ? "" : runButtons(i)}</div>`;
@@ -1683,7 +1683,7 @@ function renderRace() {
       h += `<div class="dock"><button class="btn btn-primary" data-ra="start">${icon("play")}Start</button>
         ${raceUndo.length ? `<div class="center"><button class="btn btn-text" data-ra="undo">Undo last round</button></div>` : ""}</div>`;
     } else {
-      h += `<div class="label">Who landed it first?</div><div class="whogrid">${P.map((p, i) => `<button data-ra="win" data-p="${i}"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><span>${esc(p.name)}</span></button>`).join("")}</div>
+      h += `<div class="label">Who laced it first?</div><div class="whogrid">${P.map((p, i) => `<button data-ra="win" data-p="${i}"><span class="av sm" style="--pc:${p.color}">${esc(initial(p.name))}</span><span>${esc(p.name)}</span></button>`).join("")}</div>
         <div class="center"><button class="btn btn-text" data-ra="skip">Nobody, next trick</button></div>`;
     }
   }
