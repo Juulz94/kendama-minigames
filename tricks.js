@@ -137,10 +137,11 @@ window.TRICK_SOURCES = [
     9: "1-2-3 inward jumping stick|1 turn lighthouse, Lighthouse super flamingo, Inward falling in|Around wingwalker|Lunar, Inward insta lighthouse lunar, Flip in|Bird, Double kenflip bird, Spike|3 turn lighthouse, Double kenflip spike|Double kenflip-flip kenflip lighthouse, Spike|Swap lunar, Tap lunar, Tap in|Gunslinger penguin underbird, Spike|Lightning drop swap knee bounce downspike",
     10: "1-2-3 lunar flip, Falling in|Stuntplane, Double flip bird, Spike|Triple spacewalk 3 turn airplane, Triple jumping stick|1 turn lighthouse, Tap-tap-tap lighthouse, Falling in|Stilt, Stilt over the valley, Swap bird over the valley, Spike|2 turn gunslinger kenflip spike|2.5 turntable pause, Downspike|Mooncircle handlestall, Swap UFO|Lightning drop double kenflip lighthouse, 2 turn tradespike|Downspike, Triple down whirlwind",
   }},
-  { id: "KWC 2026", levels: {  // volledige lijst, echte niveaus 1-15 (niveau 1-4 nieuwe tricks staan in TRICK_EXCLUDE)
-    2: "Candlestick|Big cup|Baseball|Takoyaki|Easy big cup, Spike|Hanging clap catch",
-    3: "Tama grip, Throw to big cup|Airplane|Around Japan|Around the world|Moshikame x 10 or more, Spike|Lighthouse, In|Stuntplane|Downspike",
-    4: "Jumping stick|Around Europe|Stuntplane fasthand|1 turn lighthouse, Tradespike|Bird, 1 turn spike|Lunar, Flip in|Airplane, Base cup, Downspike",
+  { id: "KWC 2026", levels: {  // volledige lijst, echte niveaus 1-15 
+    1: "Wave (Big cup)|Lazy lighthouse|Tama drop base cup catch|Hula hoop (Big cup)|Hanging, Two hand catch|Easy big cup, squat|Easy big cup|Easy big cup, Hop",
+    2: "Small cup, Big cup, Base cup|Easy big cup, Hopscotch|Pull up spike (Spin or No spin)|Candlestick|Big cup|Baseball|Takoyaki|Easy big cup, Spike|Hanging clap catch",
+    3: "Swing spike|Pull up spike (Spin or No spin), Flying top|Tama grip, Throw to big cup|Airplane|Around Japan|Around the world|Moshikame x 10 or more, Spike|Lighthouse, In|Stuntplane|Downspike",
+    4: "Spike, Flying top bungee kenflip spike|Base cup, Swap in|Flamingo takoyaki on foot|Jumping stick|Around Europe|Stuntplane fasthand|1 turn lighthouse, Tradespike|Bird, 1 turn spike|Lunar, Flip in|Airplane, Base cup, Downspike",
     5: "Around USA|Whirlwind|Juggle big cup, Spike|Stilt, Flip in|Handlestall, 1 turn spike|Spacewalk|Whirlpool spike|Jumping stick, Inward jumping stick|Inward lunar, Lunar, Lighthouse, In|Tap flip in",
     6: "Juggle spike|Airplane, 1.5 swap spike|Double whirlwind|Stilt flip, Flip in|2 turn airplane, Double jumping stick|Inward lunar, Flip cushion tap inward lunar, In|Lightning drop swap spike|Inward 1 turn lighthouse, Inward lighthouse flip, Inward flip in|Double gunslinger spike|Foot spike",
     7: "Tap juggle spike|Airplane, 1.5 swap juggle spike|Around stall, 1 turn spike|Wing over the valley, 1 turn spike|Bird, Kenflip bird, 1 turn spike|1 turn lighthouse, Tap lighthouse, Reverse tap lighthouse, Tradespike|Kengrip underbird, Pressure underbird, Candle grip underbird, Swap in|Around downspike fasthand|Moshikame x 100 or more, Spike|1 turn lighthouse, Swap toss lighthouse, Stuntplane fasthand",
@@ -153,10 +154,10 @@ window.TRICK_SOURCES = [
     14: "Big tap 3 tap juggle kenflip 3 kenflip spike|5 jumping stick, Inward 5 jumping stick|Inward lunar, Forward tap 3 flip swap 3 kenflip inward 3 toss inward lunar, Forward tap 3 flip swap spike|Airplane, 8 tap swap kenflip downspike fasthand|3 tap lighthouse insta 3 lighthouse flip insta toss arm bounce inward 3 flip arm lighthouse, Stuntplane fasthand|Airplane, 10 tap juggle handlestall, 1 turn spike|Big wing, Toss lighthouse insta swap 3 kenflip toss lighthouse insta swap small wing, 1 turn spike|Stilt, Typhoon 3 stilt flip, Typhoon flip in|2 gunslinger bird, 2 gunslinger bird over the valley, 2 gunslinger handlestall, 2 gunslinger spike|Stuntplane, 5 stuntplane flip stuntplane fasthand",
     15: "4 turn inward lunar, 4 back flip inward lunar, Inward 4 flip in|3 kenflip → 3 flip → 3 flip juggle 9 tap swap spike|1-2-3-4-5 stuntplane flip|Inward lunar, Knee bounce inward 3 flip juggle ghost toss knee bounce inward 3 flip inward lunar, Tradespike|6 tap swap toss lighthouse insta 3 lighthouse flip insta swap juggle 3 kenflip → 3 flip juggle 3 kenflip stuntplane fasthand|Candle around stall, 1 turn spike|1 turn lighthouse insta 3 flip 3 tap lighthouse insta 3 lighthouse flip insta 3 flip 3 tap flip in|Bosch 2026|Arm landing, Tama toss arm handlestall, Spike|Stuntplane, 3 stuntplane flip cushion tap swap 3 kenflip juggle 2 tap big tap 3 tap juggle 3 kenflip juggle 3 kenflip 3 kenflip cushion tap stuntplane fasthand",
   }},
-  { id: "KWC 2025", levels: {  // nieuwe tricks vanaf niveau 4 + alle tricks die al in oudere lijsten stonden (voor de videolink)
+  { id: "KWC 2025", levels: {  // alle nieuwe tricks + alle tricks die al in oudere lijsten stonden (voor de videolink)
     1: "Hanging clap catch|Airplane|Baseball|Candlestick|Takoyaki|Easy big cup, Spike|Trapeze|Big cup|Spike",
-    2: "Hanging spike|Jumping stick|Around the world|Earth turn|Spike, Flying top|Lighthouse, In|Moshikame x 10 or more, Spike|Downspike|Stuntplane",
-    3: "Gunslinger spike|Big cup, Kenflip big cup, Spike|Around Europe|Juggle big cup, Spike|1 turn lighthouse, Tradespike|Lunar, Flip in|Airplane, Base cup, Downspike",
+    2: "Pinky spike|Hanging spike|Jumping stick|Around the world|Earth turn|Spike, Flying top|Lighthouse, In|Moshikame x 10 or more, Spike|Downspike|Stuntplane",
+    3: "Bird, Flip spike|Stuntplane fasthand|Inward swing spike, Inward earth turn|Gunslinger spike|Big cup, Kenflip big cup, Spike|Around Europe|Juggle big cup, Spike|1 turn lighthouse, Tradespike|Lunar, Flip in|Airplane, Base cup, Downspike",
     4: "Around USA|Handlestall, 1 turn spike|Juggle spike|Stilt, Flip in|Whirlwind|Sweets special|Gunslinger downspike|Airplane, 1.5 swap spike|Tap flip lighthouse, In|1 turn lighthouse, Flip lunar, Flip in",
     5: "Tap juggle spike|2 turn airplane, Double jumping stick|Around Denmark|Double whirlwind|1 turn lighthouse insta stuntplane fasthand|Airplane, 1.5 swap juggle spike|Stilt over the valley, Flip in|Handlestall, Slip-stop special, 1 turn spike|Inward kenflip lighthouse, Stuntplane|Claw machine, Spike",
     6: "Super flamingo mooncircle|2 tap juggle spike|Around the galaxy|Gunslinger bird, Gunslinger spike|Tap swap bird, 1 turn spike|Floor cloud bounce flip lighthouse, In|Backward inward lunar, Clamp flip inward lunar, Trade spike|1 turn lighthouse, Clap lighthouse flip, Stuntplane fasthand|Tunnel jumping stick|Gunslinger downspike, Gunslinger downearth",
@@ -168,8 +169,8 @@ window.TRICK_SOURCES = [
   }},
   { id: "KWC 2024", levels: {  // idem; niveau 11 staat alleen in het Japans en is overgeslagen
     1: "Spike|Airplane|Easy big cup, Spike|Trapeze|Takoyaki|Candlestick|Big cup|Hanging clap catch|Easy spike, Flying top",
-    2: "Moshikame x 10 or more, Spike|Jumping stick|Around the world|Earth turn|Hanging spike|Lighthouse, In|Bird, 1 turn spike|Stuntplane|Downspike",
-    3: "Gunslinger spike|Around Europe|Whirlwind|Juggle big cup, Spike|1 turn lighthouse, Tradespike|Lunar, Flip in|Stuntplane fasthand|Airplane, Base cup, Downspike",
+    2: "Ladybug, Spike|Moshikame x 10 or more, Spike|Jumping stick|Around the world|Earth turn|Hanging spike|Lighthouse, In|Bird, 1 turn spike|Stuntplane|Downspike",
+    3: "Cushion tap in|Bird over the valley, Flip spike|Gunslinger spike|Around Europe|Whirlwind|Juggle big cup, Spike|1 turn lighthouse, Tradespike|Lunar, Flip in|Stuntplane fasthand|Airplane, Base cup, Downspike",
     4: "Handlestall, 1 turn spike|Airplane, 1.5 swap spike|Around USA|Juggle spike|Stilt, Flip in|1 turn lunar, Flip in|Sweets special|Nunchaku swap spike|5 jumping sticks|Base cup floor balance, Around the leg base cup, Spike",
     5: "Tap juggle spike|Around Denmark|Airplane, 1.5 swap juggle spike|Gunslinger bird, Gunslinger spike|Stilt over the valley, Flip in|Airplane, Candle block, Straight in|Ladybug, Kenflip ladybug, Spike|Inward lunar flip, Lunar flip, Flip in|Hanging handlestall, 1 turn spike|Horizontal finger corn cob, Downspike fasthand",
     6: "Around juggle|1-2-3 jumping stick|Mooncircle backcross spacewalk|Airplane, 1.5 swap 1.5 toss in|Whirlwind late kenflip|4 turn or more jumping stick|Big wing flip, 1 turn spike|Lunar, 0.5 flip inward lunar, 1.5 flip lunar, 1.5 flip inward lunar, In|Bird, Behind the back switch hand, 1 turn spike|Hanging inward 1 turn bird (kengrip), 1 turn spike",
@@ -281,8 +282,6 @@ window.TRICK_EXCLUDE = [
   "Slip stop special", "Lunar", "Whirlpool lighthouse", "Crescent special", "Frying pan slip-on stick", "Moshikame x 4",
   "Earth turn x 2", "Around Britain", "Earth turn x 3", "Wrap it up", "Zero spin", "Bird", "Swirl", "Kick spike",
   "Tama turn", "Air whip", "Drop step", "Turntable",
-  // KWC 2026, niveau 1–4: eenvoudige nieuwe tricks, voorlopig niet opgenomen
-  "Wave (Big cup)", "Lazy lighthouse", "Tama drop base cup catch", "Hula hoop (Big cup)", "Hanging, Two hand catch", "Easy big cup, squat", "Easy big cup", "Easy big cup, Hop", "Small cup, Big cup, Base cup", "Easy big cup, Hopscotch", "Pull up spike (Spin or No spin)", "Swing spike", "Pull up spike (Spin or No spin), Flying top", "Spike, Flying top bungee kenflip spike", "Base cup, Swap in", "Flamingo takoyaki on foot",
   // Dubbel: losse positie terwijl dezelfde trick met afsluiting in de lijst staat (niveau 4–12)
   "Handlestall", "Stilt", "1 turn lunar", "C-whip", "Inward lunar", "Mooncircle", "Gooncircle", "Lightning drop",
   "Boarders balance", "Around stall", "Juggle", "Lunar barrel roll", "Stilt flip", "Slip grip special", "Candle flip",
